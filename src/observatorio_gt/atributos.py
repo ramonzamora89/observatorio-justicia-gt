@@ -33,6 +33,34 @@ from observatorio_gt.net.client import PoliteClient, RequestBudgetExceeded, Thro
 
 log = structlog.get_logger(__name__)
 
+#: Campos de la ficha que describen **el caso**. Contar una materia mirando otros
+#: campos infla el resultado con nombres de tribunales.
+CAMPOS_TEMATICOS: tuple[str, ...] = (
+    "Por tipo de antecedente", "Por tipo de acto reclamado", "Tema", "Materia",
+    "Tema abordado", "Tema subyacente (texto libre", "Acto Reclamado",
+    "Disposiciones impugnadas", "Norma Impugnada",
+)
+
+#: Campos que describen **quien vio el caso**. Llevan nombres de camaras que
+#: contienen materias: «Camara de Amparo y Antejuicio» no es un antejuicio.
+CAMPOS_DE_ORGANO: tuple[str, ...] = (
+    "Tribunal de amparo de primer grado", "Autoridad impugnada",
+    "Autoridad denunciada",
+)
+
+
+def materia_aparece(atributos: dict[str, Any] | None, termino: str) -> bool:
+    """Si una materia aparece en los campos que describen el caso.
+
+    Deliberadamente **no** mira los campos de organo. Buscar «antejuicio» sobre
+    la ficha completa daba 2.136 documentos y 2.036 eran el nombre de un
+    tribunal: un numero plausible, coherente en el tiempo y falso.
+    """
+    if not atributos:
+        return False
+    aguja = termino.lower()
+    return any(aguja in str(atributos.get(k, "")).lower() for k in CAMPOS_TEMATICOS)
+
 
 @dataclass
 class ProgresoAtributos:

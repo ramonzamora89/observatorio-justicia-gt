@@ -13,7 +13,7 @@ import structlog
 import typer
 
 from observatorio_gt import atributos as atributos_mod
-from observatorio_gt import censo, idcheck, muestreo
+from observatorio_gt import censo, idcheck, muestreo, tasas
 from observatorio_gt import estudio_apelaciones as estudio
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
@@ -368,6 +368,52 @@ def cc_estudio(
     if prog.detenido_por:
         typer.echo(f"\nDETENIDO: {prog.detenido_por}", err=True)
         raise typer.Exit(code=3)
+
+
+@cc_app.command("tasas")
+def cc_tasas(
+    apelaciones: Path = typer.Option(Path("data/processed/cc_ptmp/apelaciones.jsonl")),
+    out: Path = typer.Option(Path("data/manifests/cc_ptmp/matriz_apelaciones.json")),
+) -> None:
+    """Tasas de alteracion por periodo: la amplia y la estricta, siempre las dos."""
+    filas = tasas.calcular(apelaciones)
+    typer.echo(f"\nUniverso: {tasas.UNIVERSO}\n")
+    typer.echo(f"{'periodo':<12}{'n':>6}{'AMPLIA':>9}{'IC 95%':>17}{'ESTRICTA':>10}{'IC 95%':>17}")
+    typer.echo("-" * 74)
+    for f in filas:
+        pa, la, ha = f.amplia
+        pe, le, he = f.estricta
+        typer.echo(
+            f"{f.periodo:<12}{f.n:>6}{pa:>8.1%}  [{la:.1%}, {ha:.1%}]"
+            f"{pe:>9.1%}  [{le:.1%}, {he:.1%}]"
+        )
+    typer.echo("-" * 74)
+    n = sum(f.n for f in filas)
+    typer.echo(
+        f"{'TOTAL':<12}{n:>6}{sum(f.altera_amplia for f in filas)/n:>8.1%}"
+        f"{'':>17}{sum(f.altera_estricta for f in filas)/n:>9.1%}"
+    )
+    typer.echo(
+        "\nLa diferencia entre ambas es la regla "
+        f"'{tasas.REGLA_DISCUTIDA}': cuenta como alteracion una sentencia "
+        "modificada aunque la apelacion se rechace. Es un criterio, no un hecho."
+    )
+    d = {
+        "universo": tasas.UNIVERSO,
+        "regla_discutida": tasas.REGLA_DISCUTIDA,
+        "periodos": {
+            f.periodo: {
+                "n": f.n,
+                "amplia": round(f.amplia[0], 4),
+                "amplia_ic95": [round(f.amplia[1], 4), round(f.amplia[2], 4)],
+                "estricta": round(f.estricta[0], 4),
+                "estricta_ic95": [round(f.estricta[1], 4), round(f.estricta[2], 4)],
+            }
+            for f in filas
+        },
+    }
+    out.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
+    typer.echo(f"\nresumen: {out}")
 
 
 @cc_app.command("check-ids")

@@ -158,3 +158,25 @@ def test_la_licencia_del_guion_no_afloja_lo_demas() -> None:
     assert not aparece("Notifíquese ... devuélvase los antecedentes", doc), "sin elisiones"
     assert not aparece("devuélvase los antecedentes y notifíquese", doc), "sin reordenar"
     assert not aparece("SIERRA GONZALES", doc), "sin ortografia distinta"
+
+
+# -- regla heredada: un termino puede contarse desde el nombre del organo --
+def test_campos_tematicos_y_campos_de_organo_no_son_lo_mismo() -> None:
+    """Buscar «antejuicio» en toda la ficha daba 2.136; 2.036 eran el nombre de
+    un tribunal («Cámara de Amparo y Antejuicio»), no casos de antejuicio."""
+    from observatorio_gt.atributos import CAMPOS_DE_ORGANO, CAMPOS_TEMATICOS
+
+    assert "Tribunal de amparo de primer grado" in CAMPOS_DE_ORGANO
+    assert "Autoridad impugnada" in CAMPOS_DE_ORGANO
+    assert "Por tipo de antecedente" in CAMPOS_TEMATICOS
+    assert not (set(CAMPOS_TEMATICOS) & set(CAMPOS_DE_ORGANO)), "no se solapan"
+
+
+def test_contar_materia_solo_mira_campos_tematicos() -> None:
+    from observatorio_gt.atributos import materia_aparece
+
+    ficha_falsa = {"Tribunal de amparo de primer grado":
+                   "Corte Suprema de Justicia -Cámara de Amparo y Antejuicio"}
+    ficha_real = {"Por tipo de antecedente": "Penal -Diligencias de antejuicio"}
+    assert not materia_aparece(ficha_falsa, "antejuicio")
+    assert materia_aparece(ficha_real, "antejuicio")

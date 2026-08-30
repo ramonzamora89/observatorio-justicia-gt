@@ -160,6 +160,22 @@ ausencia.** Y cuando una comprobación no se pudo completar, escribir **«no
 comprobado»**, nunca «no está». Un HTTP 200 con veinte palabras también es una
 descarga fallida.
 
+## Un término buscado puede estar contándose desde el nombre de un órgano
+
+Buscar `antejuicio` sobre el texto completo de 8.594 fichas devolvió **2.136
+documentos**: un número plausible, coherente en el tiempo y falso. **2.036 de
+ellos eran el nombre del tribunal** —«Corte Suprema de Justicia, Cámara de Amparo
+y Antejuicio»— y no casos de antejuicio. Los reales eran 112.
+
+**Antes de contar una materia, decir en qué campo vive.** Los campos temáticos
+(`Por tipo de antecedente`, `Por tipo de acto reclamado`, `Tema`, `Materia`)
+describen el caso. `Tribunal de amparo de primer grado` y `Autoridad impugnada`
+describen quién lo vio, y llevan nombres de cámaras que contienen materias.
+
+Es la misma familia de error que la respuesta vacía, al revés: un cero invita a
+sospechar, y un número razonable no. Por eso hay que auditar los resultados
+plausibles, no solo los raros.
+
 ## Lo que ya se sabe de estas fuentes, y ahorra semanas
 
 Trabajo de campo sobre el Organismo Judicial, agosto de 2026:

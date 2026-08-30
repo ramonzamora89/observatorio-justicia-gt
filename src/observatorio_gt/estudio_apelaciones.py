@@ -6,8 +6,10 @@ ese campo se refiere al amparo y no a la apelacion. **¿Subio tambien la tasa re
 de alteracion de la decision recurrida, o cambio como la Corte etiqueta?**
 
 Diseno: cuatro periodos, muestra por periodo, solo apelaciones de sentencia de
-amparo. Se lee el punto resolutivo de cada fallo -- por regla cuando alcanza, con
-modelo cuando no-- y se compara contra lo que decia la etiqueta.
+amparo. Se lee el punto resolutivo de cada fallo **por regla deterministica** y se
+compara contra lo que decia la etiqueta. La regla resuelve el 99,7%; los registros
+que quedan sin clasificar se marcan como tales y son la entrada natural de una
+capa de modelo que **todavia no esta implementada**.
 
 Reanudable: cada documento se escribe en cuanto se clasifica.
 """
@@ -181,7 +183,12 @@ def procesar(
                         "regla": res.regla,
                         "punto": res.punto,
                         "resolutivo": (res.texto or "")[:400],
-                        "fuente_efecto": "regla",
+                        # No se afirma una procedencia que no ocurrio: si
+                        # ninguna regla disparo, el campo va nulo. En un proyecto
+                        # cuyo criterio central es que cada valor diga de donde
+                        # salio, escribir "regla" en un registro sin regla es
+                        # justo el error que el esquema existe para evitar.
+                        "fuente_efecto": "regla" if res.regla else None,
                         "leido_en": datetime.now(UTC).isoformat(),
                     },
                     ensure_ascii=False,

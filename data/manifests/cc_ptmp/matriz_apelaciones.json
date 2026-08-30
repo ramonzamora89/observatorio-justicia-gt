@@ -1,53 +1,58 @@
 {
-  "generado": "2026-08-30",
-  "fuente": "apelaciones de sentencia de amparo publicadas por la CC",
-  "n_total": 1992,
-  "pendientes": 6,
-  "advertencia": "Universo PUBLICADO, no universo de resoluciones dictadas. El campo 'Sentido de la sentencia' del portal NO equivale a este resultado: subestima la alteracion entre 9 y 19 puntos segun el periodo.",
+  "universo": "Apelación de Sentencia de Amparo, publicadas por la CC",
+  "regla_discutida": "confirma con modificacion",
   "periodos": {
     "2003-2010": {
       "n": 437,
-      "mantiene": 238,
-      "altera": 199,
-      "tasa_altera": 0.4554,
-      "ic95": [
+      "amplia": 0.4554,
+      "amplia_ic95": [
         0.4093,
         0.5023
       ],
-      "etiqueta_con_lugar": 0.2677
+      "estricta": 0.2654,
+      "estricta_ic95": [
+        0.2262,
+        0.3088
+      ]
     },
     "2011-2015": {
       "n": 456,
-      "mantiene": 269,
-      "altera": 187,
-      "tasa_altera": 0.4101,
-      "ic95": [
+      "amplia": 0.4101,
+      "amplia_ic95": [
         0.3659,
         0.4558
       ],
-      "etiqueta_con_lugar": 0.2259
+      "estricta": 0.261,
+      "estricta_ic95": [
+        0.2228,
+        0.3032
+      ]
     },
     "2016-2019": {
       "n": 468,
-      "mantiene": 278,
-      "altera": 190,
-      "tasa_altera": 0.406,
-      "ic95": [
+      "amplia": 0.406,
+      "amplia_ic95": [
         0.3624,
         0.4511
       ],
-      "etiqueta_con_lugar": 0.2799
+      "estricta": 0.2372,
+      "estricta_ic95": [
+        0.2009,
+        0.2778
+      ]
     },
     "2020-2023": {
       "n": 497,
-      "mantiene": 240,
-      "altera": 257,
-      "tasa_altera": 0.5171,
-      "ic95": [
+      "amplia": 0.5171,
+      "amplia_ic95": [
         0.4732,
         0.5607
       ],
-      "etiqueta_con_lugar": 0.4266
+      "estricta": 0.3561,
+      "estricta_ic95": [
+        0.3153,
+        0.3992
+      ]
     }
   }
 }

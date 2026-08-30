@@ -107,12 +107,18 @@ refiere al **amparo**, no a la **apelación**. Un expediente puede decir
 apelada»: la protección constitucional se concedió, pero la decisión recurrida
 quedó en pie.
 
-Contraste medido sobre los casos cuyo punto resolutivo se pudo leer:
+**Contraste final, sobre 1,686 apelaciones** (criterio amplio):
 
 | Sentido del portal | Altera lo recurrido | No lo altera |
 |---|---|---|
-| Con Lugar (n=26) | 16 (62%) | 10 (38%) |
-| Sin Lugar (n=18) | 2 (11%) | 16 (89%) |
+| Con Lugar (n=563) | 393 (70%) | 170 (30%) |
+| Sin Lugar (n=1,123) | 358 (32%) | 765 (68%) |
+
+**El piloto de 70 documentos daba otra cosa**: 62%/38% para «Con Lugar» y 11%/89%
+para «Sin Lugar», este último calculado sobre 18 casos. El desacuerdo entre
+etiqueta y fallo resultó **mayor** en la corrida grande, no menor, así que la
+conclusión se refuerza. Pero la distancia entre n=18 y n>1.000 se deja escrita:
+es en sí misma un dato sobre cuánto confiar en un piloto.
 
 Está correlacionado, pero **usarlo como sustituto de la matriz de
 confirmación/revocación misclasificaría cerca de un tercio de los «Con Lugar»**.
