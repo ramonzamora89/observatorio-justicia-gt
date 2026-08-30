@@ -1,0 +1,198 @@
+"""CLI del observatorio. Tres comandos, todos del milestone de discovery."""
+
+from __future__ import annotations
+
+import subprocess
+import uuid
+from pathlib import Path
+
+import structlog
+import typer
+
+from observatorio_gt.collectors import cc_ptmp
+from observatorio_gt.config import load_source_config
+from observatorio_gt.logging_setup import configure
+from observatorio_gt.manifest import read_records, sha256_bytes, write_records
+from observatorio_gt.net.cache import DiskCache
+from observatorio_gt.net.checks import EXPECT_API, FetchOutcome
+from observatorio_gt.net.client import HttpPolicy, PoliteClient
+
+app = typer.Typer(add_completion=False, help="Observatorio de Resoluciones Judiciales de Guatemala")
+cc_app = typer.Typer(help="Portal de Jurisprudencia de la Corte de Constitucionalidad")
+manifest_app = typer.Typer(help="Utilidades de manifest")
+app.add_typer(cc_app, name="cc-ptmp")
+app.add_typer(manifest_app, name="manifest")
+
+DEFAULT_CONFIG = Path("config/sources/cc_ptmp.toml")
+log = structlog.get_logger("cli")
+
+
+def _git_state() -> tuple[str | None, bool | None]:
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+        status = subprocess.run(
+            ["git", "status", "--porcelain"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+        return commit, bool(status)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None, None
+
+
+def _build_client(config_path: Path) -> tuple[PoliteClient, object]:
+    cfg = load_source_config(config_path)
+    policy = HttpPolicy(
+        user_agent=cfg.user_agent,
+        requests_per_second=cfg.requests_per_second,
+        jitter=cfg.jitter,
+        timeout_s=cfg.timeout_s,
+        max_attempts=cfg.max_attempts,
+        max_requests_per_run=cfg.max_requests_per_run,
+    )
+    cache = DiskCache(cfg.cache_root, ttl_s=cfg.cache_ttl_hours * 3600)
+    return PoliteClient(policy, cache), cfg
+
+
+@cc_app.command("probe")
+def probe(
+    config: Path = typer.Option(DEFAULT_CONFIG, help="Ruta del TOML de la fuente"),
+    pretty: bool = typer.Option(True, help="Log legible en vez de JSON"),
+) -> None:
+    """Comprueba acceso y cumplimiento con tres peticiones, no mas."""
+    configure(pretty=pretty)
+    client, cfg = _build_client(config)
+    with client:
+        endpoint = cc_ptmp.ENDPOINTS[cfg.endpoint]  # type: ignore[attr-defined]
+        decision = client.robots.decision_for(endpoint.url)
+        typer.echo(f"user-agent      : {cfg.user_agent}")  # type: ignore[attr-defined]
+        typer.echo(f"endpoint        : {endpoint.name} -> {endpoint.url}")
+        typer.echo(f"robots.txt      : {decision.robots_url}")
+        typer.echo(f"  permitido     : {decision.allowed}")
+        typer.echo(f"  sha256        : {decision.robots_sha256}")
+        typer.echo(f"  content-signal: {decision.content_signal}")
+        typer.echo(f"  crawl-delay   : {decision.crawl_delay_s}")
+        if decision.note:
+            typer.echo(f"  nota          : {decision.note}")
+        if not decision.allowed:
+            raise typer.Exit(code=1)
+
+        seed = cfg.seed_queries[0] if cfg.seed_queries else "amparo"  # type: ignore[attr-defined]
+        payload = cc_ptmp.build_datatables_payload(
+            seed, start=0, length=1, columns=endpoint.columns
+        )
+        response, record = client.post_json(
+            endpoint.url, payload, expect=EXPECT_API, use_cache=False
+        )
+        typer.echo(f"API             : HTTP {record.http_status}, {record.content_length} bytes")
+        typer.echo(f"  outcome       : {record.outcome}")
+        if record.note:
+            typer.echo(f"  nota          : {record.note}")
+        if record.outcome is not FetchOutcome.OK:
+            raise typer.Exit(code=1)
+        body = response.json()
+        typer.echo(f"  semilla       : {seed!r}")
+        typer.echo(
+            f"  universo      : recordsFiltered={body.get('recordsFiltered')} "
+            f"(recordsTotal={body.get('recordsTotal')} es solo el eco del length)"
+        )
+
+
+@cc_app.command("discover")
+def discover(
+    limit: int = typer.Option(..., help="Numero de resoluciones a descubrir"),
+    config: Path = typer.Option(DEFAULT_CONFIG),
+    out: Path | None = typer.Option(None, help="Ruta del manifest JSONL"),
+    fetch_documents: bool = typer.Option(True, help="Descargar y preservar los PDF"),
+    pretty: bool = typer.Option(False),
+) -> None:
+    """Descubre resoluciones y escribe el manifest JSONL."""
+    configure(pretty=pretty)
+    client, cfg = _build_client(config)
+
+    if limit > cfg.max_documents_per_run:  # type: ignore[attr-defined]
+        typer.echo(
+            f"limit={limit} supera max_documents_per_run="
+            f"{cfg.max_documents_per_run}. "  # type: ignore[attr-defined]
+            "Este spike no ejecuta scraping masivo: sube el tope en la configuracion "
+            "de forma deliberada si de verdad lo necesitas.",
+            err=True,
+        )
+        raise typer.Exit(code=2)
+
+    manifest_path = out or cfg.manifest_path  # type: ignore[attr-defined]
+    commit, dirty = _git_state()
+    run_id = uuid.uuid4().hex
+
+    with client:
+        endpoint = cc_ptmp.ENDPOINTS[cfg.endpoint]  # type: ignore[attr-defined]
+        robots = client.robots.decision_for(endpoint.url)
+        if not robots.allowed:
+            typer.echo(f"robots.txt no permite la fuente: {robots.note}", err=True)
+            raise typer.Exit(code=1)
+
+        records = list(
+            cc_ptmp.discover(
+                client,
+                seed_queries=cfg.seed_queries,  # type: ignore[attr-defined]
+                limit=limit,
+                raw_root=cfg.raw_root,  # type: ignore[attr-defined]
+                run_id=run_id,
+                robots=robots,
+                git_commit=commit,
+                git_dirty=dirty,
+                with_documents=fetch_documents,
+                endpoint=endpoint,
+            )
+        )
+        written = write_records(manifest_path, records)
+
+    typer.echo(f"run_id            : {run_id}")
+    typer.echo(f"registros escritos: {written} -> {manifest_path}")
+    typer.echo(f"peticiones hechas : {client.requests_made}")
+    if written < limit:
+        typer.echo(
+            f"AVISO: se pidieron {limit} y se obtuvieron {written}. "
+            "Esto es 'no comprobado', no 'no existen mas'.",
+            err=True,
+        )
+
+
+@manifest_app.command("verify")
+def verify(path: Path) -> None:
+    """Revalida cada linea y re-hashea los documentos locales."""
+    total = ok = 0
+    hash_ok = hash_bad = hash_missing = 0
+    problems: list[str] = []
+
+    for record in read_records(path):
+        total += 1
+        ok += 1
+        doc = record.document
+        if doc is None or doc.local_path is None:
+            hash_missing += 1
+            continue
+        local = Path(doc.local_path)
+        if not local.exists():
+            hash_missing += 1
+            problems.append(f"{record.record_id}: falta el archivo {local}")
+            continue
+        digest = sha256_bytes(local.read_bytes())
+        if digest == doc.sha256:
+            hash_ok += 1
+        else:
+            hash_bad += 1
+            problems.append(f"{record.record_id}: sha256 no coincide en {local}")
+
+    typer.echo(f"registros validos : {ok}/{total}")
+    typer.echo(f"hashes coinciden  : {hash_ok}")
+    typer.echo(f"hashes discrepan  : {hash_bad}")
+    typer.echo(f"sin documento     : {hash_missing}  (no comprobado, no 'ausente')")
+    for problem in problems:
+        typer.echo(f"  ! {problem}", err=True)
+    if hash_bad or problems:
+        raise typer.Exit(code=1)
+
+
+if __name__ == "__main__":
+    app()
