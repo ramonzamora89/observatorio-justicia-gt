@@ -31,7 +31,9 @@ def tareas(limite: int = 4) -> list[str]:
         if titulo.lower().startswith("cosas que no"):
             continue
         cuerpo = " ".join(
-            l.strip() for l in bloque.splitlines()[1:] if l.strip() and not l.startswith("```")
+            linea.strip()
+            for linea in bloque.splitlines()[1:]
+            if linea.strip() and not linea.startswith("```")
         )
         salida.append(f"{titulo} — {cuerpo[:150]}")
         if len(salida) >= limite:

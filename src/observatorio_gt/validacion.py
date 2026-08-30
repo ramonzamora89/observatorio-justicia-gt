@@ -22,6 +22,7 @@ import csv
 import json
 import math
 import random
+import re
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -153,6 +154,24 @@ class Exactitud:
         return self.aciertos / self.revisados if self.revisados else 0.0
 
 
+#: El revisor escribe en prosa -«Si altera», «Sin lugar y mantiene»-, no el
+#: token exacto. Exigir la palabra literal daba 0% de exactitud sobre doce
+#: revisiones que en realidad coincidian todas.
+def normalizar_veredicto(texto: str) -> str | None:
+    t = texto.strip().lower()
+    if not t:
+        return None
+    if re.search(r"\bno\s+altera", t):
+        return "mantiene"
+    if "altera" in t:
+        return "altera"
+    if "mantiene" in t or "confirma" in t:
+        return "mantiene"
+    if "otro" in t:
+        return "otro"
+    return None
+
+
 def _wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     if n == 0:
         return 0.0, 1.0
@@ -176,8 +195,8 @@ def puntuar(revisado: Path) -> tuple[list[Exactitud], float, tuple[float, float]
 
     for fila in csv.DictReader(io.StringIO(leer_texto(revisado))):
         if True:
-            humano = (fila["VEREDICTO_HUMANO_altera_mantiene_otro"] or "").strip().lower()
-            if not humano:
+            humano = normalizar_veredicto(fila["VEREDICTO_HUMANO_altera_mantiene_otro"] or "")
+            if humano is None:
                 sin_revisar += 1
                 continue
             por[fila["estrato"]].append((fila["veredicto_maquina"], humano))

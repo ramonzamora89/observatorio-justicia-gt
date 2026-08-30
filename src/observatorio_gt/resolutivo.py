@@ -105,6 +105,19 @@ _NO_ES_FONDO = re.compile(
 #: Separadores de punto resolutivo: «I)», «II.», «1)», «SEGUNDO:».
 _PUNTO = re.compile(r"\b(?:[ivx]{1,4}[).]|\d{1,2}[).]|primero:|segundo:|tercero:)\s*")
 
+#: Materias accesorias: no son la decision revisada, son sanciones y costas que
+#: la propia Corte impone o ajusta. Una «modificacion» que solo toca esto deja
+#: intacto lo que se recurrio.
+_SOLO_ACCESORIO = re.compile(
+    r"multa|costas|cobro|plazo|pago|abogado\s+(patrocinante|auxiliante)|tesoreria|"
+    r"honorarios|apercibimiento"
+)
+#: Materias de fondo. Si aparecen, la modificacion si toca lo revisado.
+_TOCA_EL_FONDO = re.compile(
+    r"ampar|proteccion|acto\s+reclamado|autoridad|derecho|pena|prision|"
+    r"restituy|deja\s+sin\s+efecto|suspende|otorga|deniega"
+)
+
 
 def _puntos(p: str) -> list[str]:
     """Trocea el resolutivo en sus puntos numerados."""
@@ -124,8 +137,19 @@ def _clasificar_trozo(cabeza: str, fragmento: str) -> Resolutivo | None:
     # confirmacion/revocacion eso es lo que importa. Es un criterio, no un hecho:
     # queda escrito para que se pueda discutir.
 
-    # 1. «Confirma ... con la modificacion que ...» ALTERA, aunque diga confirma.
+    # 1. «Confirma ... con la modificacion ...» -- pero hay que mirar QUE se
+    # modifico. Una revision manual encontro fallos que confirman la sentencia y
+    # cuya unica «modificacion» es el plazo de pago de una multa al abogado
+    # patrocinante. Eso no altera la decision revisada: es un accesorio.
+    #
+    # Es la regla heredada tal cual: «amended» no quiere decir que cambio el
+    # fondo. La palabra «modificacion» no basta; hay que leer sobre que recae.
     if "confirm" in cabeza and re.search(r"con\s+la\s+modificaci|modificando|salvo", cabeza):
+        despues = re.split(r"con\s+la\s+modificaci\w*|modificando|salvo", cabeza, maxsplit=1)
+        cola = despues[1] if len(despues) > 1 else ""
+        if _SOLO_ACCESORIO.search(cola) and not _TOCA_EL_FONDO.search(cola):
+            return Resolutivo(EfectoSobreLoRecurrido.MANTIENE, fragmento,
+                              "confirma; la modificacion es accesoria")
         return Resolutivo(EfectoSobreLoRecurrido.ALTERA, fragmento,
                           "confirma con modificacion")
 
