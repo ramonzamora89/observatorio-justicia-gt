@@ -1,0 +1,42 @@
+# Configuracion del collector del Portal de Jurisprudencia de la CC.
+# La configuracion vive fuera del codigo (CLAUDE.md).
+
+source_id = "cc_ptmp"
+
+# El user-agent se construye como: "ObservatorioJusticiaGT/{version} (+{contact_url})".
+#
+# PENDIENTE: este repositorio todavia no tiene remoto, asi que la URL de abajo no
+# resuelve. Es identificable y honesta, pero no contactable. Cambiar este renglon
+# en cuanto el repositorio se publique. Ver KNOWN_ISSUES.md.
+contact_url = "https://github.com/ramonzamora89/observatorio-justicia-gt"
+
+# Limite de tasa conservador. 0.5 req/s = una peticion cada 2 segundos.
+requests_per_second = 0.5
+jitter = 0.2
+timeout_s = 30.0
+max_attempts = 3
+
+# Cortacircuitos: el spike no puede convertirse en scraping masivo por accidente.
+max_requests_per_run = 100
+max_documents_per_run = 25
+
+cache_ttl_hours = 168  # 7 dias
+
+raw_root = "data/raw"
+manifest_path = "data/manifests/cc_ptmp/discovery_manifest.jsonl"
+cache_root = "data/cache/http"
+
+# Cual de las dos APIs del portal se usa:
+#   "texto_libre" -> TextoLibre.aspx, busca en el texto de las sentencias.
+#   "expediente"  -> Expediente.aspx, busca por numero de expediente.
+# No son intercambiables: con endpoint="expediente", mainSearch="amparo" devuelve
+# cero, porque ahi mainSearch es un numero de expediente.
+endpoint = "texto_libre"
+
+# Consultas semilla. El campo `mainSearch` es obligatorio: sin semillas no hay
+# resultados reproducibles (mainSearch vacio devuelve cero).
+#
+# ADVERTENCIA METODOLOGICA: estas semillas determinan que resoluciones salen.
+# El conjunto resultante es una prueba tecnica de adquisicion, NO una muestra.
+# Sin denominador no hay patron, y este collector todavia no lo produce.
+seed_queries = ["amparo"]
