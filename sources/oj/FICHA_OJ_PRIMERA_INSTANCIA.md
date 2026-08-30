@@ -26,11 +26,18 @@ El desafío de Radware llega a devolver nuestro propio user-agent dentro de la U
 acceso.** Un muro anti-bot es exactamente eso. No se prueba con navegador
 automatizado, ni rotando user-agent, ni bajando el ritmo hasta colarse.
 
-**Distinción que importa:** el material **es público**. Una persona con un
-navegador puede consultar el portal. Lo que no está disponible es la
-**recolección automatizada a escala**, que es lo que un observatorio necesita
-para construir un denominador. No es lo mismo «no se puede ver» que «no se puede
-contar».
+**Revisión manual del portal (30-08-2026):** lo que ofrece públicamente es la
+consulta de **antecedentes penales**. El acceso a más servicios **requiere ser
+abogado y notario colegiado**.
+
+Eso cierra la pregunta con más fuerza que el muro anti-bot. No es que las
+resoluciones estén disponibles y cueste automatizarlas: **no están disponibles
+para quien no sea profesional del derecho colegiado**. Un observatorio no puede
+construir un denominador con una fuente cuyo acceso depende de una credencial
+profesional que además es personal.
+
+Y descarta la salida fácil de «lo hacemos a mano con un navegador»: el navegador
+tampoco da acceso a las resoluciones.
 
 ## Lo que ya se sabía, y esto confirma
 

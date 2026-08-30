@@ -75,6 +75,28 @@ qué sale. Sin denominador no hay patrón, y este collector todavía no lo produ
 
 Problemas conocidos y decisiones pendientes: `KNOWN_ISSUES.md`.
 
+## Base de datos consultable
+
+```bash
+uv run obsgt db          # carga todo en data/observatorio.duckdb
+```
+
+| Tabla | Filas | Qué es |
+|---|---|---|
+| `censo` | 66,025 | el universo publicado — el denominador |
+| `atributos` | 90,683 | fichas del portal, formato largo |
+| `decisions` | 1,992 | resolutivo leído del documento |
+| `documents` | 20 | copias inmutables con sha256 |
+| `extracciones` | 208 | cada valor con procedencia y evidencia |
+| `judicial_officers`, `appeal_links`, `citations` | 0 | **vacías a propósito** |
+
+Las tablas en cero se crean y se declaran vacías: una tabla ausente parece un
+olvido, una vacía con su cuenta en cero es un estado del proyecto.
+
+La procedencia viaja con el dato —`portal`, `deterministico`, `llm`— junto a su
+página y su cita. En este proyecto tres hallazgos se cayeron por confundir lo que
+dice la fuente con lo que dice el documento; la tabla no deja hacerlo.
+
 ## El denominador: censo del universo publicado
 
 ```bash

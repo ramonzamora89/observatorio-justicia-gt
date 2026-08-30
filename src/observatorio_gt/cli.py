@@ -13,7 +13,7 @@ import structlog
 import typer
 
 from observatorio_gt import atributos as atributos_mod
-from observatorio_gt import censo, idcheck, muestreo, tasas, validacion
+from observatorio_gt import censo, db, idcheck, muestreo, tasas, validacion
 from observatorio_gt import estudio_apelaciones as estudio
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
@@ -802,6 +802,22 @@ def extract_reprocess(
     typer.echo(f"\nprocedencia    : {dict(procedencia)}")
     typer.echo(f"evidencia      : {dict(verificacion)}")
     typer.echo("costo          : 0 tokens, 0 llamadas al modelo")
+
+
+@app.command("db")
+def construir_db(
+    destino: Path = typer.Option(Path("data/observatorio.duckdb")),
+    raiz: Path = typer.Option(Path(".")),
+) -> None:
+    """Carga todo lo acumulado en DuckDB, siguiendo DATA_MODEL.md."""
+    cargas = db.construir(raiz, destino)
+    typer.echo(f"\n{'tabla':<22}{'filas':>10}   nota")
+    typer.echo("-" * 78)
+    for c in cargas:
+        typer.echo(f"{c.tabla:<22}{c.filas:>10}   {c.nota or ''}")
+    typer.echo(f"\nbase: {destino}")
+    typer.echo("\nLas tablas en cero estan vacias a proposito, no por olvido: "
+               "una tabla ausente parece un descuido, una vacia es un estado.")
 
 
 @manifest_app.command("verify")
