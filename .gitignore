@@ -1,0 +1,32 @@
+# Los documentos judiciales NO van en git: aquí sólo el manifiesto y los hashes
+data/raw/
+data/pdf/
+data/cache/
+
+# ...pero los manifests y los hashes SÍ: son el registro auditable
+!data/manifests/
+!data/manifests/**
+*.pdf
+*.db
+*.sqlite
+*.parquet
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Contexto que no se publica
+CONTEXTO_LOCAL.md
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
