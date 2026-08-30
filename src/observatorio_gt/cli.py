@@ -27,6 +27,7 @@ from observatorio_gt.net.cache import DiskCache
 from observatorio_gt.net.checks import EXPECT_API, FetchOutcome
 from observatorio_gt.net.client import HttpPolicy, PoliteClient
 from observatorio_gt.parsers import pipeline
+from observatorio_gt.secrets import cargar_env, credencial_disponible
 
 app = typer.Typer(add_completion=False, help="Observatorio de Resoluciones Judiciales de Guatemala")
 cc_app = typer.Typer(help="Portal de Jurisprudencia de la Corte de Constitucionalidad")
@@ -320,6 +321,20 @@ def extract_run(
 
     cliente: llm.ModelClient | None = None
     if not solo_deterministico:
+        cargadas = cargar_env()
+        if cargadas:
+            # Se registran los NOMBRES, jamas los valores.
+            log.info("env_cargado", variables=cargadas)
+        if not credencial_disponible():
+            typer.echo(
+                "No hay credencial de Anthropic.\n"
+                "  Opcion A: escribe ANTHROPIC_API_KEY=... en el archivo .env "
+                "(ya esta en .gitignore)\n"
+                "  Opcion B: export ANTHROPIC_API_KEY=... en tu terminal\n"
+                "  Opcion C: vuelve a correr con --solo-deterministico",
+                err=True,
+            )
+            raise typer.Exit(code=2)
         try:
             cliente = llm.AnthropicClient(model=model)
         except Exception as exc:  # noqa: BLE001 - falta de credencial es lo normal aqui

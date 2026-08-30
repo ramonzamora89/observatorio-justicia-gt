@@ -206,3 +206,35 @@ def test_el_prompt_esta_versionado_y_con_hash() -> None:
 def test_el_esquema_del_modelo_no_admite_campos_extra() -> None:
     esquema = RespuestaLLM.model_json_schema()
     assert esquema.get("additionalProperties") is False
+
+
+# -- carga de credenciales -----------------------------------------------
+def test_env_carga_nombres_y_no_devuelve_valores(tmp_path, monkeypatch) -> None:  # noqa: ANN001
+    """Un modulo que maneja claves no debe devolverlas ni registrarlas."""
+    from observatorio_gt.secrets import cargar_env
+
+    env = tmp_path / ".env"
+    env.write_text("# comentario\nANTHROPIC_API_KEY=sk-ant-secreto\nOTRA='valor'\n", encoding="utf-8")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("OTRA", raising=False)
+    cargadas = cargar_env(env)
+    assert set(cargadas) == {"ANTHROPIC_API_KEY", "OTRA"}
+    assert "sk-ant-secreto" not in str(cargadas)
+
+
+def test_lo_explicito_del_entorno_gana_sobre_el_archivo(tmp_path, monkeypatch) -> None:  # noqa: ANN001
+    from observatorio_gt.secrets import cargar_env
+
+    env = tmp_path / ".env"
+    env.write_text("ANTHROPIC_API_KEY=del-archivo\n", encoding="utf-8")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "del-entorno")
+    assert cargar_env(env) == []
+    import os
+
+    assert os.environ["ANTHROPIC_API_KEY"] == "del-entorno"
+
+
+def test_sin_archivo_no_falla(tmp_path) -> None:
+    from observatorio_gt.secrets import cargar_env
+
+    assert cargar_env(tmp_path / "no-existe") == []
