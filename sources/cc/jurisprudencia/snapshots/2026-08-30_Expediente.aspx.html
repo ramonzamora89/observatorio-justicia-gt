@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><title>
+	PORTAL | Jurisprudencia
+</title><link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.css" /><link rel="stylesheet" href="vendor/metisMenu/dist/metisMenu.css" /><link rel="stylesheet" href="vendor/animate.css/animate.css" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css" /><link rel="stylesheet" href="fonts/pe-icon-7-stroke/css/helper.css" /><link rel="stylesheet" href="styles/style.css" /><link rel="stylesheet" href="styles/portal.css" />
+    <script src="vendor/jquery/dist/jquery.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" />
+    <script type="fefccd473b0d37a8c943120e-text/javascript">
+        function mainSearch() {
+            var table = $('#Expedientes').DataTable();
+            table.ajax.reload();
+        }
+    </script>
+</head>
+<body class="fixed-navbar fixed-sidebar">
+    <div class="splash">
+        <div class="color-line"></div>
+        <div class="splash-title">
+            <h1>Portal de Jurisprudencia</h1>
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+    <header>
+        <button class="hide-menu burger">
+            <i class="fa fa-bars fa-2x"></i>
+        </button>
+        <img src="images/logos/logoCC.gif" alt="C.C. logo" class="bannerimg" style="margin-left: 18rem" />
+        <h1 style="font-weight: bold; color: darkblue">Sistema de Consulta de Jurisprudencia Constitucional</h1>
+        <img src="images/logos/logo_unidad.png" alt="Jurisprudencia y Gaceta" class="bannerimg" style="margin-right: 18rem" />
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="background-color: #081475; color: white">
+                        <h2>Portal de Jurisprudencia</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <aside id="menu">
+                    <div id="navigation">
+                        <ul class="nav" id="side-menu">
+                            <li><a style="text-transform: none;" href="Inicio.aspx"><span class="nav-label">Inicio</span></a></li>
+                            <li>
+                                <a href="#" style="text-transform: none;"><span class="nav-label">Búsquedas</span><span class="fa fa-plus"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li><a href="TextoLibre.aspx">Texto libre</a></li>
+                                    <li><a href="Expediente.aspx">Número de expediente</a></li>
+                                    <li><a href="Estructura.aspx">Por lapso</a></li>
+                                    <li><a href="Temas.aspx">Por tipo de proceso y tema</a></li>
+                                    <li><a href="Autos.aspx">Autos</a></li>
+                                    <li><a href="Internacionales.aspx" style="text-transform: none;">Estándares internacionales</a></li>
+                                    <li><a href="ResolucionInteres.aspx" style="text-transform: none;">Resoluciones de interés </a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#" style="text-transform: none;"><span class="nav-label">Ayuda</span><span class="fa fa-plus"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li><a href="SolicitudDatos.aspx">Asistencia para búsqueda jurisprudencial</a></li>
+                                    <li><a href="ProteccionDatos.aspx">Solicitud de protección de datos</a></li>
+                                    <li><a href="Contactenos.aspx">Contáctenos</a></li>
+                                    <li><a href="Sugerencias.aspx">Sugerencias</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#" style="text-transform: none;"><span class="nav-label">Otros enlaces</span><span class="fa fa-plus"></span> </a>
+                                <ul class="nav nav-second-level">
+                                    <li><a href="Enlaces.aspx">Enlaces de interés</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <main id="wrapper">
+                    <form method="post" action="./Expediente.aspx" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="NOImoEx8MUuC09y4YMYlRaaRnwB/5Ay46pmw14jph3DKUAXfQy8mc7w0Az933G6QRFogfZ4gfiIZdZ9zcHM0STuqN8nkkNw3IpguG9ItynU=" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="8654E2BB" />
+                        <div>
+                            
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="hpanel">
+                <div class="panel-body">
+                    <div class="panel-body">
+                        <a class="small-header-action" href="#">
+                            <div class="clip-header">
+                                <i class="fa fa-arrow-up"></i>
+                            </div>
+                        </a>
+                        <h5 class="font-light m-b-xs">Búsqueda por número de expediente
+                        </h5>
+                        <table id="example2" class="table table-striped table-bordered table-hover">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 40%">
+                                        <input type="text" class="form-control" id="search" placeholder="Ingrese una o varias palabras clave. (Campo obligatorio)" />
+                                        <p class="small">
+                                            Nota: Puede ingresar varios numeros de expediente a la vez, separados por un espacio en blanco, Ej. 1920-2003 1930-2007 o bien solo parte del numero, Ej. 1920 o una combinación de ambas, Ej. 1920-2003 1930
+                                        </p>
+                                    </td>
+                                    <td style="width: 10%">
+                                        <input type="button" class="btn btn-sm btn-primary m-t-n-xs" value="Buscar" onclick="if (!window.__cfRLUnblockHandlers) return false; mainSearch();" data-cf-modified-fefccd473b0d37a8c943120e-="" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-body">
+                        <table id="Expedientes" class="table table-striped table-bordered table-hover small table-responsive  ">
+                            <thead>
+                                <tr>
+                                    <th>Concordancia</th>
+                                    <th>Expediente(s)</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha Sentencia</th>
+                                    <th>Descripción</th>
+                                    <th>Atributos</th>
+                                    <th>Archivo</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+
+    <script type="fefccd473b0d37a8c943120e-text/javascript">
+        var timer;
+
+        jQuery(document).ready(function ($) {
+            $('#Expedientes').DataTable(
+                {
+                    "ajax": {
+                        "type": "POST",
+                        "contentType": "application/json",
+                        "url": 'https://jurisprudencia.cc.gob.gt/coredataretriever/api/jurisprudencia/expedientes/v1',
+                        "dataSrc": 'documentos',
+                        "data": function (d) {
+                            d.mainSearch = $('#search').val();
+                            return JSON.stringify(d);
+                        }
+                    },
+                    "autoWidth": false,
+                    "deferRender": true,
+                    "processing": true,
+                    "serverSide": true,
+                    "searchDelay": 2000,
+                    "columns": [
+                        { "data": "concordancia" },
+                        { "data": "expedientes" },
+                        { "data": "tipoExpediente" },
+                        { "data": "fechaSentencia" },
+                        { "data": "intro" },
+                        { "data": "id" },
+                        { "data": "pdf" }
+                    ],
+                    "language": {
+                        "url": "Content/Spanish.json"
+                    },
+                    "order": [[0, "desc"]],
+                    "pagingType": "full_numbers",
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            "visible": false,
+                        },
+                        {
+                            "targets": 1,
+                            "orderable": false
+                        },
+                        {
+                            "targets": 3,
+                            "render": function (data, type, row) {
+                                if (data != null || data != undefined) {
+                                    var dateSplit = data.split('-');
+                                    var day = dateSplit[2].split('T');
+                                    return type === "display" || type === "filter" ?
+                                        day[0] + '-' + dateSplit[1] + '-' + dateSplit[0] :
+                                        data;
+                                }
+                                return '';
+                            }
+                        },
+                        {
+                            "targets": 5,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                return "<input type=\"button\" class=\"btn btn-primary\" onclick=\"window.open('AtributoElastic.aspx?id=" + data + "','Visualizacion','top=50,left=250,width=600,height=600,scrollbars=1,addressbar=0,menubar=0,toolbar=0');\" value=\"Atributos\"></button>";
+                            }
+                        },
+                        {
+                            "targets": 6,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+								data = data.replace("143.208.58.124","jurisprudencia.cc.gob.gt");
+								data = data.replace("200.6.233.69","jurisprudencia.cc.gob.gt");
+								data = data.replace("138.94.255.164","jurisprudencia.cc.gob.gt")
+                                return "<input type=\"button\" class=\"btn btn-primary\" onclick=\"window.open('" + data + "','Visualizacion','top=50,left=250,width=800,height=600,scrollbars=1,addressbar=0,menubar=0,toolbar=0');\" value=\"Visualizar\"></button>";
+                            }
+                        }
+                    ],
+                    "initComplete": function () {
+                        var api = this.api();
+
+                        $('.dataTables_filter input').unbind('.DT').bind('keyup.DT', function (e) {
+                            var value = this.value;
+
+                            clearTimeout(timer);
+
+                            timer = setTimeout(function () {
+                                api.search(value).draw();
+                            }, 2000);
+                        });
+                    }
+                });
+        });
+    </script>
+
+                        </div>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </div>
+    <!-- Vendor scripts -->
+    <script src="vendor/jquery-ui/jquery-ui.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/slimScroll/jquery.slimscroll.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/jquery-flot/jquery.flot.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/jquery-flot/jquery.flot.resize.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/jquery-flot/jquery.flot.pie.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/flot.curvedlines/curvedLines.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/jquery.flot.spline/index.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/metisMenu/dist/metisMenu.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/iCheck/icheck.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/peity/jquery.peity.min.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+    <script src="vendor/sparkline/index.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+
+    <!-- App scripts -->
+    <script src="scripts/homer.js" type="fefccd473b0d37a8c943120e-text/javascript"></script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="fefccd473b0d37a8c943120e-|49" defer></script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a32fe7724a3a38d3',t:'MTc4ODA1MjEwNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+
