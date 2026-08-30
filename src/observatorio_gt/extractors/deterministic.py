@@ -58,13 +58,27 @@ SENTIDO_A_LITERAL: tuple[tuple[str, LiteralOutcome], ...] = (
 )
 
 #: El efecto procesal **no** se deduce del resultado literal por si solo: depende
-#: de si habia decision inferior que revisar. Solo se mapea lo inequivoco; el
-#: resto queda indeterminado, que es una respuesta honesta.
+#: de si habia decision inferior que revisar.
+#:
+#: Aqui solo va lo que se sostiene con logica procesal basica en una instancia de
+#: revision: rechazar el recurso deja en pie la decision recurrida, acogerlo la
+#: altera. **Lo que no es inequivoco se deja sin valor a proposito.** Completar
+#: esta tabla a ojo seria convertir una inferencia en un hecho, que es
+#: exactamente lo que el proyecto prohibe, y el efecto procesal alimenta la
+#: matriz de confirmacion/revocacion entre instancias: un mapeo mal hecho aqui
+#: contamina el indicador central del observatorio.
+#:
+#: Ampliarla requiere criterio juridico guatemalteco, no de ingenieria.
+#: Ver KNOWN_ISSUES.
 LITERAL_A_EFECTO_EN_APELACION: dict[LiteralOutcome, NormalizedEffect] = {
     LiteralOutcome.CONFIRMADO: NormalizedEffect.MANTIENE_DECISION_INFERIOR,
+    LiteralOutcome.SIN_LUGAR: NormalizedEffect.MANTIENE_DECISION_INFERIOR,
+    LiteralOutcome.DENEGADO: NormalizedEffect.MANTIENE_DECISION_INFERIOR,
     LiteralOutcome.REVOCADO: NormalizedEffect.ALTERA_DECISION_INFERIOR,
     LiteralOutcome.MODIFICADO: NormalizedEffect.ALTERA_DECISION_INFERIOR,
     LiteralOutcome.ANULADO: NormalizedEffect.ALTERA_DECISION_INFERIOR,
+    LiteralOutcome.CON_LUGAR: NormalizedEffect.ALTERA_DECISION_INFERIOR,
+    LiteralOutcome.OTORGADO: NormalizedEffect.ALTERA_DECISION_INFERIOR,
     LiteralOutcome.INADMITIDO: NormalizedEffect.NO_ENTRA_AL_FONDO,
 }
 
@@ -94,6 +108,70 @@ def _primero(atributos: dict[str, str], alias: tuple[str, ...]) -> tuple[str, st
         valor = (atributos.get(clave) or "").strip()
         if valor:
             return clave, valor
+    return None
+
+
+#: Lenguaje resolutivo tal como lo escribe el tribunal en el POR TANTO. El
+#: modelo devuelve esa clausula literal -- se lo pide el prompt-- y traducirla a
+#: la taxonomia es trabajo deterministico, no de lectura.
+RESOLUTIVO_A_LITERAL: tuple[tuple[str, LiteralOutcome], ...] = (
+    ("sin lugar", LiteralOutcome.SIN_LUGAR),
+    ("con lugar", LiteralOutcome.CON_LUGAR),
+    ("deniega", LiteralOutcome.DENEGADO),
+    ("otorga", LiteralOutcome.OTORGADO),
+    ("confirma", LiteralOutcome.CONFIRMADO),
+    ("revoca", LiteralOutcome.REVOCADO),
+    ("modifica", LiteralOutcome.MODIFICADO),
+    ("anula", LiteralOutcome.ANULADO),
+    ("rechaza", LiteralOutcome.RECHAZADO),
+    ("improcedente", LiteralOutcome.RECHAZADO),
+    ("inadmi", LiteralOutcome.INADMITIDO),
+    ("suspend", LiteralOutcome.SUSPENDIDO),
+    ("sobresee", LiteralOutcome.ARCHIVO_SOBRESEIMIENTO),
+    ("archiva", LiteralOutcome.ARCHIVO_SOBRESEIMIENTO),
+)
+
+
+def literal_desde_resolutivo(texto: str) -> LiteralOutcome | None:
+    """Traduce la clausula resolutiva a la taxonomia literal.
+
+    Se busca el termino que aparezca **primero** en la clausula: en «I) deniega
+    el amparo; II) condena en costas», lo que resuelve el fondo es lo primero.
+    """
+    aplanado = plano(texto).lower()
+    posiciones = [
+        (aplanado.find(aguja), resultado)
+        for aguja, resultado in RESOLUTIVO_A_LITERAL
+        if aguja in aplanado
+    ]
+    if not posiciones:
+        return None
+    return min(posiciones, key=lambda x: x[0])[1]
+
+
+def efecto_procesal(
+    literal: LiteralOutcome | None, tipo_proceso: str | None
+) -> NormalizedEffect | None:
+    """Deriva el efecto procesal normalizado. Es taxonomia, no lectura.
+
+    Por eso **no se le pregunta al modelo**: depende de si habia una decision
+    inferior que revisar, que es una propiedad del tipo de proceso, no del texto.
+    Solo se mapea lo inequivoco; el resto queda sin valor, que es honesto.
+    """
+    if literal is None:
+        return None
+    es_revision = bool(tipo_proceso) and any(
+        marca in plano(tipo_proceso or "").lower()
+        for marca in ("apelacion", "casacion", "recurso")
+    )
+    if es_revision and literal in LITERAL_A_EFECTO_EN_APELACION:
+        return LITERAL_A_EFECTO_EN_APELACION[literal]
+    if literal in (LiteralOutcome.INADMITIDO, LiteralOutcome.RECHAZADO):
+        return NormalizedEffect.NO_ENTRA_AL_FONDO
+    if literal is LiteralOutcome.ARCHIVO_SOBRESEIMIENTO:
+        return NormalizedEffect.TERMINA_PROCESO
+    if literal is LiteralOutcome.SUSPENDIDO:
+        return NormalizedEffect.SUSPENDE_ACTUACION
     return None
 
 

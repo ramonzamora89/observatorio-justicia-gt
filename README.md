@@ -29,7 +29,7 @@ normalización ni análisis todavía.**
 
 ```bash
 uv sync                                  # Python 3.12 + dependencias
-uv run pytest                            # 156 tests, ninguno toca la red
+uv run pytest                            # 172 tests, ninguno toca la red
 uv run pytest -m ocr                     # 5 mas: OCR real, lento, opt-in
 uv run obsgt cc-ptmp probe               # 2 peticiones: robots.txt + una a la API
 uv run obsgt cc-ptmp discover --limit 20 # corrida real, limitada por tasa
@@ -135,8 +135,38 @@ Esa medicion es el test `tests/test_ocr_integracion.py`, reejecutable.
 ```bash
 uv run obsgt extract run --solo-deterministico   # sin modelo, sin costo
 export ANTHROPIC_API_KEY=...                     # solo para la ultima capa
-uv run obsgt extract run --limit 5               # con modelo
+uv run obsgt extract run                        # con modelo
+uv run obsgt extract reprocess                  # rehace la conversion, 0 tokens
 ```
+
+### La respuesta del modelo se guarda entera
+
+`raw_model_response` conserva el JSON íntegro de cada llamada, por la misma razón
+que `raw_api_record` en el discovery: **corregir la conversión de un campo no
+debe obligar a volver a pagarle al modelo.**
+
+Esa lección costó una corrida completa. Cuando se arreglaron el parser de fechas
+en letras y el mapeo de la cláusula resolutiva, `extract reprocess` subió
+`normalized_effect` de 3 a 13 documentos **sin gastar un token**.
+
+### Resultado sobre los 20 documentos
+
+**208 valores extraídos.** 76 del modelo, 68 por regla determinística, 64 del
+portal. De los 76 del modelo, **75 con evidencia verificada** contra el texto.
+
+| Campo | Cobertura | | Campo | Cobertura |
+|---|---|---|---|---|
+| expediente | 20/20 | | literal_outcome | 19/20 |
+| fecha_resolucion | 20/20 | | postulante | 14/20 |
+| tipo_proceso | 20/20 | | normalized_effect | 13/20 |
+| organo_origen | 20/20 | | autoridad_impugnada | 12/20 |
+| magistrados | 20/20 | | fecha_ingreso | 7/20 |
+| resolucion_impugnada_fecha | 16/20 | | tercero_interesado | 6/20 |
+| citas | 16/20 | | ponente | 5/20 |
+
+Los campos bajos **no son fallos**: `ponente` no consta en la mayoría de las
+resoluciones de la CC, y `normalized_effect` está deliberadamente incompleto
+(ver `KNOWN_ISSUES` §13).
 
 ### Tres capas, y cada campo dice de cual salio
 

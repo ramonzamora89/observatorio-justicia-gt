@@ -369,11 +369,14 @@ def extract_run(
         hechos = deterministic.extraer(texto, record.metadata.atributos)
         avisos: list[str] = []
         uso: dict[str, int] = {}
+        crudo: dict[str, object] = {}
         prompt_version = prompt_sha = modelo_usado = None
 
         if cliente is not None:
             try:
-                hechos, uso, avisos = llm.extraer_con_modelo(texto, hechos, cliente)
+                hechos, uso, avisos, crudo = llm.extraer_con_modelo_crudo(
+                    texto, hechos, cliente
+                )
                 prompt_version = PROMPT_ACTUAL.version
                 prompt_sha = PROMPT_ACTUAL.sha256
                 modelo_usado = model
@@ -417,6 +420,7 @@ def extract_run(
                     output_tokens=uso.get("output_tokens"),
                     note="solo capa deterministica" if cliente is None else None,
                 ),
+                raw_model_response=crudo,
                 warnings=avisos,
             ).model_dump_json()
         )
@@ -443,6 +447,84 @@ def extract_run(
     if uso_total:
         typer.echo(f"tokens         : {dict(uso_total)}")
     typer.echo(f"manifest       : {out}")
+
+
+@extract_app.command("reprocess")
+def extract_reprocess(
+    manifest: Path = typer.Option(Path("data/manifests/cc_ptmp/extraction_manifest.jsonl")),
+    discovery: Path = typer.Option(
+        Path("data/manifests/cc_ptmp/discovery_manifest.jsonl"),
+        help="De aqui salen los atributos que publica el portal",
+    ),
+    out: Path | None = typer.Option(None, help="Por defecto, sobre el mismo archivo"),
+    pretty: bool = typer.Option(True),
+) -> None:
+    """Rehace la extraccion desde las respuestas guardadas. SIN llamar al modelo.
+
+    Cuando se corrige la conversion de un campo -- una fecha en letras que no se
+    interpretaba, una clausula resolutiva sin mapear-- esto la aplica sobre lo
+    que el modelo ya dijo. Cuesta cero y es reproducible.
+    """
+    configure(pretty=pretty)
+    destino = out or manifest
+    atributos_por_registro = {
+        r.record_id: r.metadata.atributos for r in read_records(discovery)
+    }
+    lineas: list[str] = []
+    cobertura: Counter[str] = Counter()
+    procedencia: Counter[str] = Counter()
+    verificacion: Counter[str] = Counter()
+    sin_crudo = 0
+
+    for linea in manifest.read_text(encoding="utf-8").splitlines():
+        if not linea.strip():
+            continue
+        previo = ExtractionRecord.model_validate_json(linea)
+        if not previo.text_path:
+            lineas.append(linea)
+            continue
+        texto = Path(previo.text_path).read_text(encoding="utf-8")
+
+        # Se parte de cero: portal + reglas, y encima la respuesta guardada.
+        hechos = deterministic.extraer(texto, atributos_por_registro.get(previo.record_id))
+        avisos: list[str] = []
+        if previo.raw_model_response:
+            hechos, avisos = llm.aplicar_respuesta(previo.raw_model_response, hechos)
+            resultados = verificar(hechos, texto)
+            avisos.extend(marcar_no_verificados(hechos, resultados))
+            for v in resultados:
+                if v.status is VerificationStatus.VERIFICADA:
+                    verificacion["verificada"] += 1
+                elif v.status is not VerificationStatus.SIN_VALOR:
+                    verificacion[str(v.status)] += 1
+        else:
+            sin_crudo += 1
+
+        for nombre in hechos.model_fields:
+            campo = getattr(hechos, nombre)
+            if campo.consta:
+                cobertura[nombre] += 1
+                procedencia[str(campo.provenance)] += 1
+
+        lineas.append(
+            previo.model_copy(
+                update={
+                    "facts": hechos,
+                    "warnings": avisos,
+                    "run": previo.run.model_copy(
+                        update={"note": "reprocesado sin llamar al modelo"}
+                    ),
+                }
+            ).model_dump_json()
+        )
+
+    destino.write_text("\n".join(lineas) + ("\n" if lineas else ""), encoding="utf-8")
+    typer.echo(f"\nreprocesados   : {len(lineas)}  (sin respuesta guardada: {sin_crudo})")
+    for nombre in ResolutionFacts.model_fields:
+        typer.echo(f"  {nombre:<28} {cobertura[nombre]:>2}/{len(lineas)}")
+    typer.echo(f"\nprocedencia    : {dict(procedencia)}")
+    typer.echo(f"evidencia      : {dict(verificacion)}")
+    typer.echo("costo          : 0 tokens, 0 llamadas al modelo")
 
 
 @manifest_app.command("verify")

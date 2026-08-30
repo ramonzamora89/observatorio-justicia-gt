@@ -58,6 +58,24 @@ Devuelve el `length` pedido. El universo está en `recordsFiltered`. Hay test.
 Anuncia a veces una codificación que el cuerpo no trae; httpx revienta con
 `incorrect header check`. El cliente pide `Accept-Encoding: identity`.
 
+### 13. La taxonomía de efecto procesal está a medias, y a propósito
+`normalized_effect` se deriva de `literal_outcome` solo donde la lógica procesal
+básica lo sostiene: en una instancia de revisión, rechazar el recurso deja en pie
+la decisión recurrida y acogerlo la altera. **Lo demás queda sin valor.**
+
+Completar la tabla a ojo sería convertir una inferencia en un hecho. Y este campo
+alimenta la matriz de confirmación/revocación entre instancias, que es un
+indicador central: un mapeo mal hecho aquí contamina el resultado y no se nota.
+
+Los casos abiertos —qué efecto tiene un amparo denegado en única instancia, o un
+dictamen en opinión consultiva— **requieren criterio jurídico guatemalteco, no de
+ingeniería.** Cobertura actual: 13 de 20.
+
+### 14. Un campo del modelo sin evidencia comprobable
+En el expediente 5577-2015, 1 de 3 citas jurisprudenciales no aparece literalmente
+en el documento. Está marcada en el manifest, no borrada. Vale la pena mirarla a
+mano: puede ser una cita que el modelo compuso, o una que el parser partió.
+
 ## Deuda menor
 
 ### 9. `.gitignore` menciona `data/pdf/`, que no se usa

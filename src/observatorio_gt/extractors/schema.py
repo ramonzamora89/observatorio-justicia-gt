@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from datetime import date
 from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -169,4 +170,8 @@ class ExtractionRecord(BaseModel):
     text_path: str | None = None
     facts: ResolutionFacts
     run: ExtractionRun
+    #: Respuesta integra del modelo. Se conserva por la misma razon que
+    #: `raw_api_record` en el discovery: si manana se corrige la conversion de un
+    #: campo, reprocesar no debe obligar a volver a pagarle al modelo.
+    raw_model_response: dict[str, Any] = Field(default_factory=dict)
     warnings: list[str] = Field(default_factory=list)

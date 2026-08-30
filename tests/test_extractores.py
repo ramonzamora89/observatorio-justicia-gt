@@ -281,3 +281,124 @@ def test_una_confianza_absurda_no_tumba_la_extraccion() -> None:
     assert resultado.ponente.value == "Ana Lopez"
     assert resultado.ponente.confidence == 1.0
     assert "fuera de rango" in (resultado.ponente.note or "")
+
+
+# -- conversion: el modelo copia literal, el codigo normaliza -------------
+def test_fecha_en_letras_del_modelo_se_convierte() -> None:
+    """El prompt le prohibe normalizar. Exigirle ISO era contradecirlo."""
+    cliente: ModelClient = ClienteFalso(
+        {"fecha_ingreso": campo("diez de diciembre de mil novecientos noventa y seis")}
+    )
+    resultado, _uso, _avisos = extraer_con_modelo(DOCUMENTO, ResolutionFacts(), cliente)
+    assert resultado.fecha_ingreso.value == date(1996, 12, 10)
+
+
+def test_fecha_iso_tambien_se_acepta() -> None:
+    cliente: ModelClient = ClienteFalso({"fecha_ingreso": campo("1996-12-10")})
+    resultado, _uso, _avisos = extraer_con_modelo(DOCUMENTO, ResolutionFacts(), cliente)
+    assert resultado.fecha_ingreso.value == date(1996, 12, 10)
+
+
+@pytest.mark.parametrize(
+    ("clausula", "esperado"),
+    [
+        ("I) deniega el amparo solicitado; II) condena en costas", LiteralOutcome.DENEGADO),
+        ("confirma la sentencia venida en grado", LiteralOutcome.CONFIRMADO),
+        ("I) sin lugar los recursos de apelación", LiteralOutcome.SIN_LUGAR),
+        ("por notoriamente improcedente, deniega", LiteralOutcome.RECHAZADO),
+    ],
+)
+def test_clausula_resolutiva_se_traduce_a_la_taxonomia(
+    clausula: str, esperado: LiteralOutcome
+) -> None:
+    cliente: ModelClient = ClienteFalso({"literal_outcome": campo(clausula)})
+    resultado, _uso, _avisos = extraer_con_modelo(DOCUMENTO, ResolutionFacts(), cliente)
+    assert resultado.literal_outcome.value is esperado
+
+
+def test_gana_el_termino_que_resuelve_el_fondo() -> None:
+    """«I) deniega el amparo; II) condena en costas»: manda lo primero."""
+    from observatorio_gt.extractors.deterministic import literal_desde_resolutivo
+
+    assert literal_desde_resolutivo(
+        "I) deniega el amparo; II) confirma lo demas"
+    ) is LiteralOutcome.DENEGADO
+
+
+def test_el_efecto_procesal_no_se_le_pregunta_al_modelo() -> None:
+    """Es taxonomia, no lectura: depende de si habia decision inferior."""
+    from observatorio_gt.extractors.schema import NormalizedEffect
+
+    cliente: ModelClient = ClienteFalso(
+        {
+            "literal_outcome": campo("confirma la sentencia apelada"),
+            "normalized_effect": campo("confirma_con_modificacion"),
+        }
+    )
+    hechos = ResolutionFacts(
+        tipo_proceso=Extracted[str](
+            value="Apelación de Sentencia de Amparo",
+            confidence=1.0,
+            provenance=Provenance.PORTAL,
+        )
+    )
+    resultado, _uso, _avisos = extraer_con_modelo(DOCUMENTO, hechos, cliente)
+    assert resultado.normalized_effect.value is NormalizedEffect.MANTIENE_DECISION_INFERIOR
+    assert resultado.normalized_effect.provenance is Provenance.DETERMINISTICO
+
+
+def test_sin_revision_previa_el_efecto_queda_sin_derivar() -> None:
+    """En amparo en unica instancia no hay decision inferior que mantener."""
+    from observatorio_gt.extractors.deterministic import efecto_procesal
+
+    assert efecto_procesal(LiteralOutcome.CONFIRMADO, "Amparo en Única Instancia") is None
+
+
+def test_la_respuesta_cruda_se_conserva() -> None:
+    """Corregir la conversion no debe obligar a volver a pagarle al modelo."""
+    from observatorio_gt.extractors.llm import extraer_con_modelo_crudo
+
+    payload = {"ponente": campo("Ana Lopez"), "campo_futuro": None}
+    cliente: ModelClient = ClienteFalso({"ponente": campo("Ana Lopez")})
+    _h, _u, _a, crudo = extraer_con_modelo_crudo(DOCUMENTO, ResolutionFacts(), cliente)
+    assert crudo == {"ponente": campo("Ana Lopez")}
+    assert payload  # el crudo es lo que devolvio el cliente, sin recortar
+
+
+def test_reprocesar_no_necesita_al_modelo() -> None:
+    """`aplicar_respuesta` es pura: la misma que usa `extract reprocess`.
+
+    Corregir la conversion de un campo debe poder aplicarse sobre lo que el
+    modelo ya dijo, sin volver a pagarlo.
+    """
+    from observatorio_gt.extractors.llm import aplicar_respuesta
+
+    crudo = {"fecha_ingreso": campo("diez de diciembre de mil novecientos noventa y seis")}
+    hechos, _avisos = aplicar_respuesta(crudo, ResolutionFacts())
+    assert hechos.fecha_ingreso.value == date(1996, 12, 10)
+
+
+@pytest.mark.parametrize(
+    ("literal", "esperado"),
+    [
+        (LiteralOutcome.SIN_LUGAR, "mantiene_decision_inferior"),
+        (LiteralOutcome.DENEGADO, "mantiene_decision_inferior"),
+        (LiteralOutcome.CONFIRMADO, "mantiene_decision_inferior"),
+        (LiteralOutcome.CON_LUGAR, "altera_decision_inferior"),
+        (LiteralOutcome.REVOCADO, "altera_decision_inferior"),
+    ],
+)
+def test_efecto_en_instancia_de_revision(literal: LiteralOutcome, esperado: str) -> None:
+    """Rechazar el recurso deja en pie lo recurrido; acogerlo lo altera."""
+    from observatorio_gt.extractors.deterministic import efecto_procesal
+
+    efecto = efecto_procesal(literal, "Apelación de Sentencia de Amparo")
+    assert efecto is not None and efecto.value == esperado
+
+
+def test_lo_que_no_es_inequivoco_se_queda_sin_valor() -> None:
+    """Completar la taxonomia a ojo seria convertir inferencia en hecho."""
+    from observatorio_gt.extractors.deterministic import efecto_procesal
+
+    assert efecto_procesal(LiteralOutcome.OTRO, "Apelación de Sentencia de Amparo") is None
+    assert efecto_procesal(None, "Apelación de Sentencia de Amparo") is None

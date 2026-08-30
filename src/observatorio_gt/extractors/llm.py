@@ -34,6 +34,7 @@ if TYPE_CHECKING:  # pragma: no cover - solo para tipar
 else:
     from anthropic.types import JSONOutputFormatParam, OutputConfigParam
 
+from observatorio_gt.extractors.deterministic import efecto_procesal
 from observatorio_gt.extractors.prompts import PROMPT_ACTUAL, Prompt
 from observatorio_gt.extractors.schema import (
     Citation,
@@ -239,16 +240,46 @@ def _a_extraido[T](
 
 
 def _fecha(valor: str) -> Any:
+    """ISO primero; si no, la fecha en letras.
+
+    El prompt le pide al modelo copiar literal, y las sentencias escriben
+    «diez de diciembre de mil novecientos noventa y seis». Exigirle ISO era
+    pedirle que normalizara justo lo que se le prohibio normalizar. La
+    conversion es trabajo deterministico y ya existe.
+    """
     from datetime import date
 
-    return date.fromisoformat(valor.strip())
+    from observatorio_gt.extractors.fechas import parse_fecha
+
+    limpio = valor.strip()
+    try:
+        return date.fromisoformat(limpio)
+    except ValueError:
+        pass
+    encontrada = parse_fecha(limpio)
+    if encontrada is None:
+        raise ValueError(f"no se pudo interpretar como fecha: {limpio!r}")
+    return encontrada[0]
 
 
-def _enum[E](clase: Any) -> Any:
-    def convertir(valor: str) -> Any:
-        return clase(valor.strip().lower())
+def _resultado_literal(valor: str) -> Any:
+    """Token de la taxonomia, o la clausula resolutiva tal como la escribe el fallo.
 
-    return convertir
+    El modelo devuelve «I) deniega el amparo solicitado; II) condena en costas»
+    porque se le pidio copiar literal. Traducir eso a la taxonomia es trabajo
+    deterministico, y la misma tabla sirve para el dato que publica el portal.
+    """
+    from observatorio_gt.extractors.deterministic import literal_desde_resolutivo
+
+    limpio = valor.strip()
+    try:
+        return LiteralOutcome(limpio.lower())
+    except ValueError:
+        pass
+    mapeado = literal_desde_resolutivo(limpio)
+    if mapeado is None:
+        raise ValueError(f"clausula resolutiva no reconocida: {limpio[:80]!r}")
+    return mapeado
 
 
 def resumen_conocido(hechos: ResolutionFacts) -> str:
@@ -261,29 +292,16 @@ def resumen_conocido(hechos: ResolutionFacts) -> str:
     return "\n".join(lineas)
 
 
-def extraer_con_modelo(
-    texto: str,
-    hechos: ResolutionFacts,
-    cliente: ModelClient,
-    *,
-    prompt: Prompt = PROMPT_ACTUAL,
-) -> tuple[ResolutionFacts, dict[str, int], list[str]]:
-    """Completa ``hechos`` con lo que solo esta en el cuerpo del documento."""
+def aplicar_respuesta(
+    crudo: dict[str, Any], hechos: ResolutionFacts
+) -> tuple[ResolutionFacts, list[str]]:
+    """Aplica un JSON crudo del modelo sobre los hechos ya conocidos.
+
+    Es una funcion pura y sin red: la misma que usa el reproceso de una
+    respuesta guardada. Toda la logica de conversion vive aqui, para que
+    arreglarla no obligue a volver a llamar al modelo.
+    """
     avisos: list[str] = []
-    if len(texto) > MAX_CARACTERES:
-        # No se trunca en silencio: PIPELINE y CLAUDE.md prohiben inventar, y un
-        # documento recortado a la mitad produce ausencias que parecen hallazgos.
-        avisos.append(
-            f"documento de {len(texto)} caracteres, por encima del limite de "
-            f"{MAX_CARACTERES}: no se envio al modelo"
-        )
-        return hechos, {}, avisos
-
-    user = prompt.render_user(texto, resumen_conocido(hechos))
-    crudo, uso = cliente.extract(
-        prompt.system, user, esquema_para_api(RespuestaLLM.model_json_schema())
-    )
-
     try:
         respuesta = RespuestaLLM.model_validate(crudo)
     except ValidationError as exc:
@@ -299,13 +317,21 @@ def extraer_con_modelo(
     if not hechos.organo_origen.consta:
         hechos.organo_origen = _a_extraido(respuesta.organo_origen)
     if not hechos.literal_outcome.consta:
-        hechos.literal_outcome = _a_extraido(
-            respuesta.literal_outcome, _enum(LiteralOutcome)
-        )
+        hechos.literal_outcome = _a_extraido(respuesta.literal_outcome, _resultado_literal)
+
+    # El efecto procesal NO se le pregunta al modelo: depende de si habia una
+    # decision inferior que revisar, que es una propiedad del tipo de proceso.
+    # Es taxonomia, no lectura.
     if not hechos.normalized_effect.consta:
-        hechos.normalized_effect = _a_extraido(
-            respuesta.normalized_effect, _enum(NormalizedEffect)
-        )
+        efecto = efecto_procesal(hechos.literal_outcome.value, hechos.tipo_proceso.value)
+        if efecto is not None:
+            hechos.normalized_effect = Extracted[NormalizedEffect](
+                value=efecto,
+                confidence=hechos.literal_outcome.confidence,
+                provenance=Provenance.DETERMINISTICO,
+                evidence=hechos.literal_outcome.evidence,
+                note=f"derivado de literal_outcome={hechos.literal_outcome.value}",
+            )
     if not hechos.ponente.consta:
         hechos.ponente = _a_extraido(respuesta.ponente)
 
@@ -332,7 +358,48 @@ def extraer_con_modelo(
             provenance=Provenance.LLM,
         )
 
+    return hechos, avisos
+
+
+def extraer_con_modelo(
+    texto: str,
+    hechos: ResolutionFacts,
+    cliente: ModelClient,
+    *,
+    prompt: Prompt = PROMPT_ACTUAL,
+) -> tuple[ResolutionFacts, dict[str, int], list[str]]:
+    """Completa ``hechos`` con lo que solo esta en el cuerpo del documento."""
+    hechos, uso, avisos, _crudo = extraer_con_modelo_crudo(
+        texto, hechos, cliente, prompt=prompt
+    )
     return hechos, uso, avisos
+
+
+def extraer_con_modelo_crudo(
+    texto: str,
+    hechos: ResolutionFacts,
+    cliente: ModelClient,
+    *,
+    prompt: Prompt = PROMPT_ACTUAL,
+) -> tuple[ResolutionFacts, dict[str, int], list[str], dict[str, Any]]:
+    """Igual que :func:`extraer_con_modelo`, pero devuelve tambien el JSON crudo.
+
+    Se conserva por la misma razon que ``raw_api_record`` en el discovery: si
+    manana se corrige la conversion de un campo, reprocesar no debe obligar a
+    volver a pagarle al modelo. Esa leccion costo una corrida completa.
+    """
+    if len(texto) > MAX_CARACTERES:
+        return hechos, {}, [
+            f"documento de {len(texto)} caracteres, por encima del limite de "
+            f"{MAX_CARACTERES}: no se envio al modelo"
+        ], {}
+
+    user = prompt.render_user(texto, resumen_conocido(hechos))
+    crudo, uso = cliente.extract(
+        prompt.system, user, esquema_para_api(RespuestaLLM.model_json_schema())
+    )
+    hechos, avisos = aplicar_respuesta(crudo, hechos)
+    return hechos, uso, avisos, crudo
 
 
 def ahora_iso() -> str:
