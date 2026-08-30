@@ -29,6 +29,24 @@ from typing import Any
 
 REGLA_DISCUTIDA = "confirma con modificacion"
 
+
+def leer_texto(path: Path) -> str:
+    """Lee el archivo aunque la hoja de calculo lo haya guardado en otra codificacion.
+
+    La ficha de validacion sale de aqui en UTF-8, pero vuelve editada desde Excel
+    o Numbers, que la guardan en cp1252 o latin-1. Abrirla como UTF-8 revienta con
+    un byte invalido y se lleva por delante tanto la puntuacion como el hook de
+    inicio de sesion.
+    """
+    crudo = path.read_bytes()
+    for codificacion in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
+        try:
+            return crudo.decode(codificacion)
+        except UnicodeDecodeError:
+            continue
+    return crudo.decode("utf-8", errors="replace")
+
+
 #: Estratos y cuanto se revisa de cada uno. El de la regla discutida esta
 #: sobrerrepresentado a proposito.
 PLAN: tuple[tuple[str, int], ...] = (
@@ -154,8 +172,10 @@ def puntuar(revisado: Path) -> tuple[list[Exactitud], float, tuple[float, float]
     por: dict[str, list[tuple[str, str]]] = defaultdict(list)
     tamanos: dict[str, int] = {}
     sin_revisar = 0
-    with revisado.open(encoding="utf-8") as fh:
-        for fila in csv.DictReader(fh):
+    import io
+
+    for fila in csv.DictReader(io.StringIO(leer_texto(revisado))):
+        if True:
             humano = (fila["VEREDICTO_HUMANO_altera_mantiene_otro"] or "").strip().lower()
             if not humano:
                 sin_revisar += 1
