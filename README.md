@@ -29,7 +29,7 @@ normalización ni análisis todavía.**
 
 ```bash
 uv sync                                  # Python 3.12 + dependencias
-uv run pytest                            # 140 tests, ninguno toca la red
+uv run pytest                            # 156 tests, ninguno toca la red
 uv run pytest -m ocr                     # 5 mas: OCR real, lento, opt-in
 uv run obsgt cc-ptmp probe               # 2 peticiones: robots.txt + una a la API
 uv run obsgt cc-ptmp discover --limit 20 # corrida real, limitada por tasa
@@ -150,6 +150,26 @@ Sin llamar a ningun modelo se llenan **119 valores en 20 documentos**. Al modelo
 le queda lo que ninguna otra capa puede dar: fechas procesales, resolucion
 impugnada, magistrados firmantes, ponente, citas jurisprudenciales, y el sentido
 del fallo en los 8 documentos donde el portal no lo publica.
+
+### Toda cita se coteja contra el documento
+
+Un campo con una cita **parecida** al documento es tan peligroso como uno
+inventado, y se ve igual de bien en un JSON. Por eso cada valor de procedencia
+`llm` se verifica automaticamente:
+
+- campos simples: la cita debe ser una subcadena **literal** del documento;
+- magistrados: se comprueba **cada nombre por separado**, no el bloque unido --
+  el pie de firmas viene partido por saltos de pagina, pero un nombre que no
+  aparece es una persona que no firmo;
+- citas jurisprudenciales: su texto debe estar en el documento.
+
+Lo que no pasa **se marca, no se borra**: saber que el modelo propone valores sin
+respaldo, y con que frecuencia, es una medida de su fiabilidad.
+
+Primera corrida real (3 documentos, Opus 5): **8 de 8 valores del modelo con
+evidencia verificada**. En la corrida anterior, con el prompt v1, uno fallo
+porque el modelo elidio el centro de la cita con puntos suspensivos. El cotejo
+lo rechazo, que es lo correcto; el prompt v2 lo pide explicitamente.
 
 ### Lo que el esquema hace cumplir
 

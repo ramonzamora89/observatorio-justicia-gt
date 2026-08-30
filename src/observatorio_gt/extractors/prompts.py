@@ -26,8 +26,12 @@ Reglas, en orden de importancia:
 conocimiento externo, ni lo deduzcas de lo que suele ocurrir en casos parecidos. \
 Un campo en null es un resultado correcto y frecuente.
 2. Para cada campo que devuelvas con valor, incluye un fragmento textual breve \
-del documento (evidence) que lo sustente, copiado literalmente. Si no puedes \
-citar, el valor es null.
+del documento (evidence) que lo sustente. El fragmento debe ser CONTIGUO y \
+copiado caracter por caracter del documento: sin puntos suspensivos, sin elidir \
+el centro, sin unir partes separadas, sin corregir la ortografia ni los espacios. \
+Se coteja automaticamente contra el documento y un fragmento que no aparezca tal \
+cual invalida el campo. Si no puedes citar asi, elige un fragmento mas corto que \
+si sea contiguo, o devuelve null.
 3. Incluye confidence entre 0 y 1 por campo. Baja la confianza cuando el texto \
 sea ambiguo, este dañado, o admita mas de una lectura.
 4. No corrijas, no normalices, no traduzcas ni completes nombres, numeros de \
@@ -77,5 +81,12 @@ class Prompt:
         return self.user_template.format(texto=texto, conocidos=conocidos or "(ninguno)")
 
 
-PROMPT_V1 = Prompt(version="extraccion-cc/v1", system=SYSTEM_V1, user_template=USER_V1)
-PROMPTS: dict[str, Prompt] = {PROMPT_V1.version: PROMPT_V1}
+# La version cambia cuando cambia el texto. Un prompt editado en silencio hace
+# incomparables dos extracciones que dicen tener la misma procedencia.
+#
+# v2: la cita debe ser contigua y literal. En la prueba con v1 el modelo elidio
+# el centro de un fragmento con puntos suspensivos; el cotejo automatico lo
+# rechazo, que es lo correcto, pero conviene pedirlo explicitamente.
+PROMPT_V2 = Prompt(version="extraccion-cc/v2", system=SYSTEM_V1, user_template=USER_V1)
+PROMPT_ACTUAL = PROMPT_V2
+PROMPTS: dict[str, Prompt] = {PROMPT_V2.version: PROMPT_V2}

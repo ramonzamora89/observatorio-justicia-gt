@@ -15,7 +15,7 @@ from observatorio_gt.extractors.llm import (
     extraer_con_modelo,
     resumen_conocido,
 )
-from observatorio_gt.extractors.prompts import PROMPT_V1
+from observatorio_gt.extractors.prompts import PROMPT_ACTUAL as PROMPT_V1
 from observatorio_gt.extractors.schema import (
     Extracted,
     LiteralOutcome,
@@ -190,6 +190,14 @@ def test_al_modelo_se_le_dice_que_ya_se_sabe() -> None:
     assert "literal_outcome" in resumen
 
 
+def test_el_prompt_exige_cita_contigua_y_literal() -> None:
+    """El modelo eligio elidir el centro con puntos suspensivos; el cotejo lo
+    rechazo. Pedirlo explicitamente evita gastar la llamada."""
+    system = PROMPT_V1.system.lower()
+    assert "contiguo" in system
+    assert "puntos suspensivos" in system
+
+
 def test_el_prompt_prohibe_valorar_conducta() -> None:
     """CLAUDE.md: no pedir al modelo que determine si un juez es corrupto."""
     system = PROMPT_V1.system.lower()
@@ -199,7 +207,7 @@ def test_el_prompt_prohibe_valorar_conducta() -> None:
 
 
 def test_el_prompt_esta_versionado_y_con_hash() -> None:
-    assert PROMPT_V1.version == "extraccion-cc/v1"
+    assert PROMPT_V1.version.startswith("extraccion-cc/v")
     assert len(PROMPT_V1.sha256) == 64
 
 
@@ -214,7 +222,9 @@ def test_env_carga_nombres_y_no_devuelve_valores(tmp_path, monkeypatch) -> None:
     from observatorio_gt.secrets import cargar_env
 
     env = tmp_path / ".env"
-    env.write_text("# comentario\nANTHROPIC_API_KEY=sk-ant-secreto\nOTRA='valor'\n", encoding="utf-8")
+    env.write_text(
+        "# comentario\nANTHROPIC_API_KEY=sk-ant-secreto\nOTRA='valor'\n", encoding="utf-8"
+    )
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("OTRA", raising=False)
     cargadas = cargar_env(env)
@@ -238,3 +248,36 @@ def test_sin_archivo_no_falla(tmp_path) -> None:
     from observatorio_gt.secrets import cargar_env
 
     assert cargar_env(tmp_path / "no-existe") == []
+
+
+def test_el_esquema_que_viaja_no_lleva_cotas_numericas() -> None:
+    """La API responde 400: "For 'number' type, properties maximum, minimum
+    are not supported". La validacion del rango se queda de nuestro lado."""
+    import json
+
+    from observatorio_gt.extractors.llm import esquema_para_api
+
+    limpio = json.dumps(esquema_para_api(RespuestaLLM.model_json_schema()))
+    assert "minimum" not in limpio and "maximum" not in limpio
+    # y la funcion quita las cotas venga de donde venga el esquema
+    con_cotas = {"properties": {"c": {"type": "number", "minimum": 0, "maximum": 1}}}
+    assert esquema_para_api(con_cotas) == {"properties": {"c": {"type": "number"}}}
+
+
+def test_confianza_fuera_de_rango_se_acota_y_se_deja_constancia() -> None:
+    """Que el modelo se salga del rango es en si un dato, no un detalle."""
+    from observatorio_gt.extractors.llm import acotar_confianza
+
+    assert acotar_confianza(0.9) == (0.9, None)
+    valor, aviso = acotar_confianza(1.4)
+    assert valor == 1.0 and aviso and "fuera de rango" in aviso
+    valor, aviso = acotar_confianza(-0.2)
+    assert valor == 0.0 and aviso is not None
+
+
+def test_una_confianza_absurda_no_tumba_la_extraccion() -> None:
+    cliente: ModelClient = ClienteFalso({"ponente": campo("Ana Lopez", conf=1.7)})
+    resultado, _uso, _avisos = extraer_con_modelo(DOCUMENTO, ResolutionFacts(), cliente)
+    assert resultado.ponente.value == "Ana Lopez"
+    assert resultado.ponente.confidence == 1.0
+    assert "fuera de rango" in (resultado.ponente.note or "")

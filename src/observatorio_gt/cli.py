@@ -15,11 +15,16 @@ from observatorio_gt import idcheck
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
 from observatorio_gt.extractors import deterministic, llm
-from observatorio_gt.extractors.prompts import PROMPT_V1
+from observatorio_gt.extractors.prompts import PROMPT_ACTUAL
 from observatorio_gt.extractors.schema import (
     ExtractionRecord,
     ExtractionRun,
     ResolutionFacts,
+)
+from observatorio_gt.extractors.verificacion import (
+    VerificationStatus,
+    marcar_no_verificados,
+    verificar,
 )
 from observatorio_gt.logging_setup import configure
 from observatorio_gt.manifest import read_records, sha256_bytes, write_records
@@ -350,6 +355,7 @@ def extract_run(
     procedencia: Counter[str] = Counter()
     lineas: list[str] = []
     uso_total: Counter[str] = Counter()
+    verificacion: Counter[str] = Counter()
 
     for record in list(read_records(manifest))[:limit]:
         doc = record.document
@@ -368,11 +374,21 @@ def extract_run(
         if cliente is not None:
             try:
                 hechos, uso, avisos = llm.extraer_con_modelo(texto, hechos, cliente)
-                prompt_version = PROMPT_V1.version
-                prompt_sha = PROMPT_V1.sha256
+                prompt_version = PROMPT_ACTUAL.version
+                prompt_sha = PROMPT_ACTUAL.sha256
                 modelo_usado = model
             except (llm.ExtractionRefused, llm.ExtractionInvalid) as exc:
                 avisos.append(f"extraccion con modelo fallida: {type(exc).__name__}: {exc}")
+            else:
+                # Toda cita del modelo se coteja contra el documento. Un campo
+                # con evidencia que no aparece se marca; no se borra.
+                resultados = verificar(hechos, texto)
+                avisos.extend(marcar_no_verificados(hechos, resultados))
+                for v in resultados:
+                    if v.status is VerificationStatus.VERIFICADA:
+                        verificacion["verificada"] += 1
+                    elif v.status is not VerificationStatus.SIN_VALOR:
+                        verificacion[str(v.status)] += 1
         for clave, valor in uso.items():
             uso_total[clave] += valor
 
@@ -415,6 +431,15 @@ def extract_run(
         marca = "" if n else "   (ninguno: no consta o no comprobado)"
         typer.echo(f"  {nombre:<28} {n:>2}/{len(lineas)}{marca}")
     typer.echo(f"\nprocedencia    : {dict(procedencia)}")
+    if verificacion:
+        typer.echo(f"evidencia      : {dict(verificacion)}")
+        no_ok = sum(v for k, v in verificacion.items() if k != "verificada")
+        if no_ok:
+            typer.echo(
+                f"AVISO: {no_ok} campos del modelo sin evidencia comprobable en el "
+                "documento. Estan marcados en el manifest, no borrados.",
+                err=True,
+            )
     if uso_total:
         typer.echo(f"tokens         : {dict(uso_total)}")
     typer.echo(f"manifest       : {out}")

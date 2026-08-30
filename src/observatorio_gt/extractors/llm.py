@@ -34,7 +34,7 @@ if TYPE_CHECKING:  # pragma: no cover - solo para tipar
 else:
     from anthropic.types import JSONOutputFormatParam, OutputConfigParam
 
-from observatorio_gt.extractors.prompts import PROMPT_V1, Prompt
+from observatorio_gt.extractors.prompts import PROMPT_ACTUAL, Prompt
 from observatorio_gt.extractors.schema import (
     Citation,
     Evidence,
@@ -63,7 +63,11 @@ class CampoLLM(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     value: str | None = Field(default=None, description="Valor literal, o null si no consta")
-    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    #: Sin cotas aqui a proposito. La API de salida estructurada rechaza
+    #: `minimum`/`maximum` en numeros, y la confianza que reporta el modelo es
+    #: entrada no confiable: se acota al construir el `Extracted`, que si tiene
+    #: el rango en el tipo.
+    confidence: float = Field(default=0.0, description="Entre 0 y 1")
     page: int | None = Field(default=None, description="Pagina donde consta")
     quote: str | None = Field(default=None, max_length=600, description="Fragmento textual")
 
@@ -94,11 +98,33 @@ class RespuestaLLM(BaseModel):
     normalized_effect: CampoLLM = CampoLLM()
     ponente: CampoLLM = CampoLLM()
     magistrados: list[MagistradoLLM] = Field(default_factory=list)
-    magistrados_confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    magistrados_confidence: float = Field(default=0.0, description="Entre 0 y 1")
     magistrados_quote: str | None = Field(default=None, max_length=600)
     magistrados_page: int | None = None
     citas: list[CitaLLM] = Field(default_factory=list)
-    citas_confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    citas_confidence: float = Field(default=0.0, description="Entre 0 y 1")
+
+
+#: Palabras clave de JSON Schema que la salida estructurada no admite. La API
+#: responde 400 con "For 'number' type, properties maximum, minimum are not
+#: supported". Se quitan del esquema que viaja; la validacion sigue de nuestro
+#: lado, donde `Extracted` si declara el rango.
+NO_SOPORTADAS = ("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum")
+
+
+def esquema_para_api(esquema: dict[str, Any]) -> dict[str, Any]:
+    """Copia del esquema sin las palabras clave que la API rechaza."""
+
+    def limpiar(nodo: Any) -> Any:
+        if isinstance(nodo, dict):
+            return {k: limpiar(v) for k, v in nodo.items() if k not in NO_SOPORTADAS}
+        if isinstance(nodo, list):
+            return [limpiar(x) for x in nodo]
+        return nodo
+
+    limpio = limpiar(esquema)
+    assert isinstance(limpio, dict)
+    return limpio
 
 
 class ModelClient(Protocol):
@@ -166,6 +192,15 @@ class ExtractionInvalid(RuntimeError):
     """La respuesta no encaja en el esquema. No se acepta 'casi'."""
 
 
+def acotar_confianza(valor: float) -> tuple[float, str | None]:
+    """Acota a [0, 1]. Que el modelo se salga del rango es en si un dato."""
+    if valor != valor:  # NaN
+        return 0.0, "el modelo devolvio una confianza no numerica"
+    if valor < 0.0 or valor > 1.0:
+        return min(max(valor, 0.0), 1.0), f"confianza fuera de rango ({valor}), acotada"
+    return valor, None
+
+
 def _a_extraido[T](
     campo: CampoLLM, convertir: Any = str, minimo_confianza: float = 0.0
 ) -> Extracted[Any]:
@@ -181,10 +216,11 @@ def _a_extraido[T](
             provenance=Provenance.LLM,
             note=f"descartado: el modelo propuso {campo.value!r} sin citar evidencia",
         )
-    if campo.confidence < minimo_confianza:
+    confianza, aviso_confianza = acotar_confianza(campo.confidence)
+    if confianza < minimo_confianza:
         return Extracted[Any](
             provenance=Provenance.LLM,
-            note=f"descartado por baja confianza ({campo.confidence:.2f}): {campo.value!r}",
+            note=f"descartado por baja confianza ({confianza:.2f}): {campo.value!r}",
         )
     try:
         valor = convertir(campo.value)
@@ -195,9 +231,10 @@ def _a_extraido[T](
         )
     return Extracted[Any](
         value=valor,
-        confidence=campo.confidence,
+        confidence=confianza,
         provenance=Provenance.LLM,
-        evidence=Evidence(page=campo.page, quote=campo.quote.strip()),
+        evidence=Evidence(page=campo.page, quote=campo.quote.strip()[:600]),
+        note=aviso_confianza,
     )
 
 
@@ -229,7 +266,7 @@ def extraer_con_modelo(
     hechos: ResolutionFacts,
     cliente: ModelClient,
     *,
-    prompt: Prompt = PROMPT_V1,
+    prompt: Prompt = PROMPT_ACTUAL,
 ) -> tuple[ResolutionFacts, dict[str, int], list[str]]:
     """Completa ``hechos`` con lo que solo esta en el cuerpo del documento."""
     avisos: list[str] = []
@@ -243,7 +280,9 @@ def extraer_con_modelo(
         return hechos, {}, avisos
 
     user = prompt.render_user(texto, resumen_conocido(hechos))
-    crudo, uso = cliente.extract(prompt.system, user, RespuestaLLM.model_json_schema())
+    crudo, uso = cliente.extract(
+        prompt.system, user, esquema_para_api(RespuestaLLM.model_json_schema())
+    )
 
     try:
         respuesta = RespuestaLLM.model_validate(crudo)
@@ -271,11 +310,14 @@ def extraer_con_modelo(
         hechos.ponente = _a_extraido(respuesta.ponente)
 
     if respuesta.magistrados and respuesta.magistrados_quote:
+        conf_mag, _ = acotar_confianza(respuesta.magistrados_confidence)
         hechos.magistrados = Extracted[list[JudicialOfficer]](
             value=[JudicialOfficer(name=m.name, role=m.role) for m in respuesta.magistrados],
-            confidence=respuesta.magistrados_confidence,
+            confidence=conf_mag,
             provenance=Provenance.LLM,
-            evidence=Evidence(page=respuesta.magistrados_page, quote=respuesta.magistrados_quote),
+            evidence=Evidence(
+                page=respuesta.magistrados_page, quote=respuesta.magistrados_quote[:600]
+            ),
         )
     elif respuesta.magistrados:
         avisos.append("magistrados propuestos sin cita: descartados")
@@ -286,7 +328,7 @@ def extraer_con_modelo(
                 Citation(cited_case_number=c.cited_case_number, citation_text=c.citation_text)
                 for c in respuesta.citas
             ],
-            confidence=respuesta.citas_confidence,
+            confidence=acotar_confianza(respuesta.citas_confidence)[0],
             provenance=Provenance.LLM,
         )
 
