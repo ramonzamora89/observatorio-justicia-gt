@@ -31,11 +31,19 @@ expedientes anteriores al 2000 — 9 de los 20 de la primera corrida. El collect
 **no los unifica a propósito**: normalizar es otra capa. Pero la capa de
 vinculación tiene que saberlo o concluirá que no coinciden.
 
-### 5. No se ha verificado que el `id` sea estable en el tiempo
-Hoy aparece en la URL de atributos y dentro del nombre del PDF, lo que sugiere
-que sí. No está comprobado longitudinalmente. Si no lo fuera, la clave natural
-sería `(expediente, fecha_sentencia)`. Es una verificación barata y es la
-siguiente tarea recomendada.
+### 5. El `id` es consistente entre rutas, pero falta la prueba del tiempo
+**Comprobado el 29-08-2026:** los 20 identificadores van y vuelven al mismo
+expediente por **dos endpoints independientes** — se obtuvieron por el de texto
+libre y se confirmaron por el de expedientes. 20/20 consistentes, 0 discrepan.
+Eso descarta que sea un número de sesión: es una clave del repositorio.
+
+**Lo que eso todavía no prueba** es la persistencia en el tiempo, que por
+definición exige que pase tiempo. `obsgt cc-ptmp check-ids` existe para
+volver a correrlo; la línea base está en
+`data/manifests/cc_ptmp/id_stability_2026-08-29.json`.
+
+Repetirlo en unas semanas. Si apareciera una discrepancia, la clave natural
+pasa a ser `(expediente, fecha_sentencia)`.
 
 ### 6. No existe listado completo sin consulta
 `mainSearch` vacío devuelve cero. Todo descubrimiento pasa por una consulta, y

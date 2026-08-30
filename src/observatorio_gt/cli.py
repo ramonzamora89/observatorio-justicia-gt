@@ -1,4 +1,4 @@
-"""CLI del observatorio. Tres comandos, todos del milestone de discovery."""
+"""CLI del observatorio. Todos los comandos son del milestone de discovery."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 import structlog
 import typer
 
+from observatorio_gt import idcheck
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
 from observatorio_gt.logging_setup import configure
@@ -156,6 +157,43 @@ def discover(
             "Esto es 'no comprobado', no 'no existen mas'.",
             err=True,
         )
+
+
+@cc_app.command("check-ids")
+def check_ids(
+    manifest: Path = typer.Option(
+        Path("data/manifests/cc_ptmp/discovery_manifest.jsonl"), help="Manifest a verificar"
+    ),
+    config: Path = typer.Option(DEFAULT_CONFIG),
+    limit: int | None = typer.Option(None, help="Verificar solo los primeros N registros"),
+    report: Path | None = typer.Option(None, help="Escribir informe JSON"),
+    pretty: bool = typer.Option(False),
+) -> None:
+    """Comprueba que el `id` del portal sigue designando el mismo expediente.
+
+    Vuelve a correrlo dentro de unos dias contra el mismo manifest: la
+    persistencia en el tiempo es lo que no se puede comprobar de una sentada.
+    """
+    configure(pretty=pretty)
+    client, _cfg = _build_client(config)
+    records = list(read_records(manifest))
+
+    with client:
+        checks = list(idcheck.check_all(client, records, limit=limit))
+
+    counts = idcheck.summary(checks)
+    for check in checks:
+        if check.verdict is not idcheck.IdVerdict.CONSISTENTE:
+            typer.echo(f"  {check.verdict:<14} id={check.source_document_id:<8} "
+                       f"exp={check.expediente_manifest:<12} {check.note or ''}")
+    typer.echo(f"consistentes  : {counts['consistente']}/{len(checks)}")
+    typer.echo(f"discrepan     : {counts['discrepa']}")
+    typer.echo(f"no comprobados: {counts['no_comprobado']}  (no es lo mismo que inestable)")
+    if report:
+        idcheck.write_report(report, checks)
+        typer.echo(f"informe       : {report}")
+    if counts["discrepa"]:
+        raise typer.Exit(code=1)
 
 
 @manifest_app.command("verify")

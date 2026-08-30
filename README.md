@@ -29,10 +29,11 @@ normalización ni análisis todavía.**
 
 ```bash
 uv sync                                  # Python 3.12 + dependencias
-uv run pytest                            # 62 tests, ninguno toca la red
+uv run pytest                            # 72 tests, ninguno toca la red
 uv run obsgt cc-ptmp probe               # 2 peticiones: robots.txt + una a la API
 uv run obsgt cc-ptmp discover --limit 20 # corrida real, limitada por tasa
 uv run obsgt manifest verify data/manifests/cc_ptmp/discovery_manifest.jsonl
+uv run obsgt cc-ptmp check-ids           # el id sigue designando el mismo expediente
 ```
 
 ## Resultado de la primera corrida
@@ -43,6 +44,7 @@ uv run obsgt manifest verify data/manifests/cc_ptmp/discovery_manifest.jsonl
 - 20/20 sha256 coinciden con el archivo en disco.
 - 20/20 expedientes confirmados **contra el texto del propio PDF**.
 - 20/20 con `robots.allowed` y el sha256 del `robots.txt` de la corrida.
+- 20/20 identificadores consistentes por dos endpoints independientes.
 - 0 avisos, 0 documentos no comprobados.
 - Los 20 PDF tienen capa de texto nativa (Microsoft Word). Ninguno escaneado.
 
@@ -72,13 +74,24 @@ qué sale. Sin denominador no hay patrón, y este collector todavía no lo produ
 
 Problemas conocidos y decisiones pendientes: `KNOWN_ISSUES.md`.
 
+## Estabilidad del identificador
+
+`obsgt cc-ptmp check-ids` comprueba que el `id` del portal sigue designando el
+mismo expediente, por dos caminos independientes: `id → AtributoElastic →
+expediente` y `expediente → API de expedientes → id`.
+
+Línea base del 29-08-2026: **20/20 consistentes, 0 discrepan**. Eso descarta que
+el `id` sea un número de sesión. La persistencia en el tiempo exige repetirlo
+más adelante contra el mismo manifest; el informe queda en
+`data/manifests/cc_ptmp/id_stability_2026-08-29.json`.
+
 ## Siguiente tarea recomendada
 
-**Verificar que el `id` del portal es estable en el tiempo** (KNOWN_ISSUES §5).
-Es barato — volver a pedir los 20 mismos `id` dentro de unos días y comparar — y
-condiciona la clave con la que se vincularán instancias. Si no fuera estable, la
-clave natural pasa a ser `(expediente, fecha_sentencia)` y el modelo cambia
-antes de tener datos encima.
+El **milestone de parsing**: convertir los PDF preservados en texto con
+referencia de página, con la comprobación de plausibilidad léxica por documento
+que aquí se hizo a mano sobre 2 de 20. Los 20 documentos tienen capa de texto
+nativa, así que el camino es `pdftotext`/PyMuPDF, no OCR — pero la comprobación
+hay que hacerla igual, porque una capa de texto puede perder letras y verse
+completa.
 
-Después: el milestone de parsing, con la comprobación de plausibilidad léxica
-por documento que el paso 6 hizo a mano.
+Repetir `check-ids` en unas semanas (KNOWN_ISSUES §5).

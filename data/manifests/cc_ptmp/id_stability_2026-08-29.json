@@ -1,0 +1,190 @@
+{
+  "checked_at": "2026-08-30T02:02:38.474172+00:00",
+  "summary": {
+    "consistente": 20,
+    "discrepa": 0,
+    "no_comprobado": 0
+  },
+  "checks": [
+    {
+      "record_id": "70a5a88923521df1",
+      "source_document_id": "790964",
+      "expediente_manifest": "61-1998",
+      "expediente_atributos": "61-98",
+      "id_por_expediente": "790964",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "e2b9b4abdd05d5ce",
+      "source_document_id": "810866",
+      "expediente_manifest": "908-2008",
+      "expediente_atributos": "908-2008",
+      "id_por_expediente": "810866",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "fbb75d4a6efdd289",
+      "source_document_id": "790826",
+      "expediente_manifest": "1483-1996",
+      "expediente_atributos": "1483-96",
+      "id_por_expediente": "790826",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "faf5e12c76f1ae63",
+      "source_document_id": "790842",
+      "expediente_manifest": "1455-1996",
+      "expediente_atributos": "1455-96",
+      "id_por_expediente": "790842",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "c0f49e16412282ad",
+      "source_document_id": "809917",
+      "expediente_manifest": "2281-2009",
+      "expediente_atributos": "2281-2009",
+      "id_por_expediente": "809917",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "c53eea5c1629b983",
+      "source_document_id": "790825",
+      "expediente_manifest": "1428-1996",
+      "expediente_atributos": "1428-96",
+      "id_por_expediente": "790825",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "7d26bafe1f30c181",
+      "source_document_id": "822851",
+      "expediente_manifest": "3815-2012",
+      "expediente_atributos": "3815-2012",
+      "id_por_expediente": "822851",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "56bf99ff3381bb8a",
+      "source_document_id": "791019",
+      "expediente_manifest": "119-1999",
+      "expediente_atributos": "119-99",
+      "id_por_expediente": "791019",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "768dad9da74f3da1",
+      "source_document_id": "814580",
+      "expediente_manifest": "2174-2010",
+      "expediente_atributos": "2174-2010",
+      "id_por_expediente": "814580",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "9c301740478a0356",
+      "source_document_id": "795937",
+      "expediente_manifest": "894-1998",
+      "expediente_atributos": "894-98",
+      "id_por_expediente": "795937",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "56f51512af69fa5d",
+      "source_document_id": "830772",
+      "expediente_manifest": "5577-2015",
+      "expediente_atributos": "5577-2015",
+      "id_por_expediente": "830772",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "cdc1919e856e7f20",
+      "source_document_id": "790250",
+      "expediente_manifest": "1778-2004",
+      "expediente_atributos": "1778-2004",
+      "id_por_expediente": "790250",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "38be292cc72d51e1",
+      "source_document_id": "806583",
+      "expediente_manifest": "1247-2005",
+      "expediente_atributos": "1247-2005",
+      "id_por_expediente": "806583",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "15c9e69957682761",
+      "source_document_id": "790813",
+      "expediente_manifest": "1187-1996",
+      "expediente_atributos": "1187-96",
+      "id_por_expediente": "790813",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "1ae5946d26cffd9c",
+      "source_document_id": "792686",
+      "expediente_manifest": "11-1987",
+      "expediente_atributos": "11-87",
+      "id_por_expediente": "792686",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "0102c765087059bb",
+      "source_document_id": "798083",
+      "expediente_manifest": "903-2002",
+      "expediente_atributos": "903-2002",
+      "id_por_expediente": "798083",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "1a8146d9a3d656c9",
+      "source_document_id": "820260",
+      "expediente_manifest": "3882-2011",
+      "expediente_atributos": "3882-2011",
+      "id_por_expediente": "820260",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "9a656841cfb6e702",
+      "source_document_id": "824106",
+      "expediente_manifest": "4857-2012",
+      "expediente_atributos": "4857-2012",
+      "id_por_expediente": "824106",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "af6433bd7ccf8629",
+      "source_document_id": "824810",
+      "expediente_manifest": "3415-2013",
+      "expediente_atributos": "3415-2013",
+      "id_por_expediente": "824810",
+      "verdict": "consistente",
+      "note": null
+    },
+    {
+      "record_id": "ccc27fcf0be4bbe9",
+      "source_document_id": "790814",
+      "expediente_manifest": "1188-1996",
+      "expediente_atributos": "1188-96",
+      "id_por_expediente": "790814",
+      "verdict": "consistente",
+      "note": null
+    }
+  ]
+}
