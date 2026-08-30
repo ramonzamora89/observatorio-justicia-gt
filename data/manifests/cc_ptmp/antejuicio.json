@@ -1,0 +1,1250 @@
+{
+  "n_muestra": 112,
+  "estimado_universo": 812,
+  "advertencia": "Estimacion ponderada desde muestra estratificada e=5%. Universo PUBLICADO, no resuelto.",
+  "casos": [
+    {
+      "id": "856405",
+      "anio": "2022",
+      "exp": [
+        "5661-2022"
+      ],
+      "tipo": "Inconstitucionalidad de Carácter General",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/856405.5661-2022.pdf"
+    },
+    {
+      "id": "841024",
+      "anio": "2015",
+      "exp": [
+        "5467-2015"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/841024.5467-2015.pdf"
+    },
+    {
+      "id": "791471",
+      "anio": "2002",
+      "exp": [
+        "240-2002"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791471.240-2002.pdf"
+    },
+    {
+      "id": "836103",
+      "anio": "2013",
+      "exp": [
+        "2713-2013"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/836103.2713-2013.pdf"
+    },
+    {
+      "id": "833915",
+      "anio": "2016",
+      "exp": [
+        "595-2016"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/833915.595-2016.pdf"
+    },
+    {
+      "id": "839454",
+      "anio": "2017",
+      "exp": [
+        "5453-2017"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/839454.5453-2017.pdf"
+    },
+    {
+      "id": "854645",
+      "anio": "2023",
+      "exp": [
+        "1304-2023"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/854645.1304-2023.pdf"
+    },
+    {
+      "id": "846562",
+      "anio": "2020",
+      "exp": [
+        "1694-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/846562.1694-2020.pdf"
+    },
+    {
+      "id": "848925",
+      "anio": "2021",
+      "exp": [
+        "3814-2021"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/848925.3814-2021.pdf"
+    },
+    {
+      "id": "815928",
+      "anio": "2010",
+      "exp": [
+        "2670-2010"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/815928.2670-2010.pdf"
+    },
+    {
+      "id": "827191",
+      "anio": "2014",
+      "exp": [
+        "698-2014"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/827191.698-2014.pdf"
+    },
+    {
+      "id": "817200",
+      "anio": "2010",
+      "exp": [
+        "1367-2010"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/817200.1367-2010.pdf"
+    },
+    {
+      "id": "807158",
+      "anio": "2005",
+      "exp": [
+        "731-2005"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/807158.731-2005.pdf"
+    },
+    {
+      "id": "791491",
+      "anio": "2002",
+      "exp": [
+        "802-2002"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "no_entra_al_fondo",
+      "regla": "no entra al fondo",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791491.802-2002.pdf"
+    },
+    {
+      "id": "833719",
+      "anio": "2015",
+      "exp": [
+        "5150-2015"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/833719.5150-2015.pdf"
+    },
+    {
+      "id": "863478",
+      "anio": "2023",
+      "exp": [
+        "7004-2023"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/863478.7004-2023.pdf"
+    },
+    {
+      "id": "849572",
+      "anio": "2021",
+      "exp": [
+        "5761-2021"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/849572.5761-2021.pdf"
+    },
+    {
+      "id": "808453",
+      "anio": "2009",
+      "exp": [
+        "4103-2009"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/808453.4103-2009.pdf"
+    },
+    {
+      "id": "807454",
+      "anio": "2004",
+      "exp": [
+        "2727-2004"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/807454.2727-2004.pdf"
+    },
+    {
+      "id": "835517",
+      "anio": "2014",
+      "exp": [
+        "5919-2014"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/835517.5919-2014.pdf"
+    },
+    {
+      "id": "852189",
+      "anio": "2022",
+      "exp": [
+        "4962-2022"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/852189.4962-2022.pdf"
+    },
+    {
+      "id": "849975",
+      "anio": "2020",
+      "exp": [
+        "2361-2020 ",
+        "2404-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/849975.2361-2020%20y%202404-2020.pdf"
+    },
+    {
+      "id": "825725",
+      "anio": "2013",
+      "exp": [
+        "3677-2013"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/825725.3677-2013.pdf"
+    },
+    {
+      "id": "791608",
+      "anio": "2003",
+      "exp": [
+        "2040-2003"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791608.2040-2003.pdf"
+    },
+    {
+      "id": "807931",
+      "anio": "2006",
+      "exp": [
+        "510-2006 ",
+        "731-2006"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/807931.510%20y%20731-2006.pdf"
+    },
+    {
+      "id": "823002",
+      "anio": "2012",
+      "exp": [
+        "5407-2012"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/823002.5407-2012.pdf"
+    },
+    {
+      "id": "848123",
+      "anio": "2020",
+      "exp": [
+        "2300-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/848123.2300-2020.pdf"
+    },
+    {
+      "id": "808865",
+      "anio": "2009",
+      "exp": [
+        "4295-2009"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/808865.4295-2009.pdf"
+    },
+    {
+      "id": "843077",
+      "anio": "2019",
+      "exp": [
+        "1040-2019"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/843077.1040-2019.pdf"
+    },
+    {
+      "id": "821359",
+      "anio": "2011",
+      "exp": [
+        "3119-2011"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/821359.3119-2011.pdf"
+    },
+    {
+      "id": "853217",
+      "anio": "2020",
+      "exp": [
+        "2519-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "altera",
+      "regla": "revoca",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/853217.2519-2020.pdf"
+    },
+    {
+      "id": "856417",
+      "anio": "2023",
+      "exp": [
+        "7798-2023"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/856417.7798-2023.pdf"
+    },
+    {
+      "id": "834194",
+      "anio": "2016",
+      "exp": [
+        "2039-2016"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/834194.2039-2016.pdf"
+    },
+    {
+      "id": "845625",
+      "anio": "2018",
+      "exp": [
+        "1292-2018"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/845625.1292-2018.pdf"
+    },
+    {
+      "id": "830230",
+      "anio": "2015",
+      "exp": [
+        "3732-2015 ",
+        "3928-2015"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/830230.3732-2015%20y%203928-2015.pdf"
+    },
+    {
+      "id": "851560",
+      "anio": "2020",
+      "exp": [
+        "4124-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "altera",
+      "regla": "revoca",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/851560.4124-2020.pdf"
+    },
+    {
+      "id": "800126",
+      "anio": "2005",
+      "exp": [
+        "2527-2005"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/800126.2527-2005.pdf"
+    },
+    {
+      "id": "824927",
+      "anio": "2012",
+      "exp": [
+        "5087-2012"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/824927.5087-2012.pdf"
+    },
+    {
+      "id": "837273",
+      "anio": "2017",
+      "exp": [
+        "2867-2017"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/837273.2867-2017.pdf"
+    },
+    {
+      "id": "837746",
+      "anio": "2017",
+      "exp": [
+        "1863-2017"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/837746.1863-2017.pdf"
+    },
+    {
+      "id": "845209",
+      "anio": "2019",
+      "exp": [
+        "1889-2019"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/845209.1889-2019.pdf"
+    },
+    {
+      "id": "850068",
+      "anio": "2021",
+      "exp": [
+        "4563-2021"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/850068.4563-2021.pdf"
+    },
+    {
+      "id": "846957",
+      "anio": "2019",
+      "exp": [
+        "7210-2019"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/846957.7210-2019.pdf"
+    },
+    {
+      "id": "811863",
+      "anio": "2008",
+      "exp": [
+        "321-2008 ",
+        "445-2008"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/811863.321%20y%20445-2008.pdf"
+    },
+    {
+      "id": "848006",
+      "anio": "2020",
+      "exp": [
+        "1611-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/848006.1611-2020.pdf"
+    },
+    {
+      "id": "816711",
+      "anio": "2010",
+      "exp": [
+        "3311-2010"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/816711.3311-2010.pdf"
+    },
+    {
+      "id": "832923",
+      "anio": "2016",
+      "exp": [
+        "1241-2016"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "con lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/832923.1241-2016.pdf"
+    },
+    {
+      "id": "828187",
+      "anio": "2011",
+      "exp": [
+        "2302-2011"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/828187.2302-2011.pdf"
+    },
+    {
+      "id": "825066",
+      "anio": "2014",
+      "exp": [
+        "43-2014"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "con lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/825066.43-2014.pdf"
+    },
+    {
+      "id": "841967",
+      "anio": "2018",
+      "exp": [
+        "4632-2018"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/841967.4632-2019.pdf"
+    },
+    {
+      "id": "807169",
+      "anio": "2005",
+      "exp": [
+        "2755-2005"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/807169.2755-2005.pdf"
+    },
+    {
+      "id": "817332",
+      "anio": "2010",
+      "exp": [
+        "3646-2010"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "revoca",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/817332.3646-2010.pdf"
+    },
+    {
+      "id": "843617",
+      "anio": "2019",
+      "exp": [
+        "607-2019"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/843617.607-2019.pdf"
+    },
+    {
+      "id": "810303",
+      "anio": "2008",
+      "exp": [
+        "3840-2008 ",
+        "4138-2008"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/810303.3840%20y%204138-2008.pdf"
+    },
+    {
+      "id": "791634",
+      "anio": "2003",
+      "exp": [
+        "2237-2003"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791634.2237-2003.pdf"
+    },
+    {
+      "id": "851134",
+      "anio": "2022",
+      "exp": [
+        "1652-2022"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/851134.1652-2022.pdf"
+    },
+    {
+      "id": "852890",
+      "anio": "2022",
+      "exp": [
+        "6579-2022",
+        "6597-2022 ",
+        "6613-2022"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "revoca",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/852890.6579-2022.pdf"
+    },
+    {
+      "id": "798094",
+      "anio": "2002",
+      "exp": [
+        "1064-2002"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/798094.1064-2002.pdf"
+    },
+    {
+      "id": "832421",
+      "anio": "2014",
+      "exp": [
+        "2345-2014"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/832421.2345-2014.pdf"
+    },
+    {
+      "id": "853508",
+      "anio": "2023",
+      "exp": [
+        "2812-2023"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/853508.2812-2023.pdf"
+    },
+    {
+      "id": "813455",
+      "anio": "2008",
+      "exp": [
+        "3581-2008"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/813455.3581-2008.pdf"
+    },
+    {
+      "id": "851224",
+      "anio": "2021",
+      "exp": [
+        "1785-2021"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/851224.1785-2021.pdf"
+    },
+    {
+      "id": "805844",
+      "anio": "2005",
+      "exp": [
+        "10-2005"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "confirma con modificacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/805844.10-2005.pdf"
+    },
+    {
+      "id": "840454",
+      "anio": "2018",
+      "exp": [
+        "1663-2018"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/840454.1663-2018.pdf"
+    },
+    {
+      "id": "796405",
+      "anio": "1999",
+      "exp": [
+        "938-1999"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "revoca",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/796405.938-99.pdf"
+    },
+    {
+      "id": "830910",
+      "anio": "2015",
+      "exp": [
+        "2670-2015"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/830910.2670-2015.pdf"
+    },
+    {
+      "id": "853413",
+      "anio": "2022",
+      "exp": [
+        "5869-2022"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/853413.5869-2022.pdf"
+    },
+    {
+      "id": "844161",
+      "anio": "2019",
+      "exp": [
+        "5803-2019"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/844161.5803-2019.pdf"
+    },
+    {
+      "id": "841075",
+      "anio": "2018",
+      "exp": [
+        "186-2018"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/841075.186-2018.pdf"
+    },
+    {
+      "id": "791180",
+      "anio": "2000",
+      "exp": [
+        "276-2000"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791180.276-2000.pdf"
+    },
+    {
+      "id": "840114",
+      "anio": "2017",
+      "exp": [
+        "5093-2017"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/840114.5093-2017.pdf"
+    },
+    {
+      "id": "840108",
+      "anio": "2018",
+      "exp": [
+        "1256-2018"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/840108.1256-2018.pdf"
+    },
+    {
+      "id": "791504",
+      "anio": "2003",
+      "exp": [
+        "5-2003"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791504.05-2003.pdf"
+    },
+    {
+      "id": "825584",
+      "anio": "2014",
+      "exp": [
+        "1081-2014"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/825584.1081-2014.pdf"
+    },
+    {
+      "id": "824645",
+      "anio": "2013",
+      "exp": [
+        "1308-2013"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/824645.1308-2013.pdf"
+    },
+    {
+      "id": "846522",
+      "anio": "2020",
+      "exp": [
+        "736-2020"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/846522.736-2020.pdf"
+    },
+    {
+      "id": "816850",
+      "anio": "2010",
+      "exp": [
+        "4168-2010"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/816850.4168-2010.pdf"
+    },
+    {
+      "id": "813450",
+      "anio": "2007",
+      "exp": [
+        "3457-2007"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/813450.3457-2007.pdf"
+    },
+    {
+      "id": "822550",
+      "anio": "2011",
+      "exp": [
+        "4442-2011"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/822550.4442-2011.pdf"
+    },
+    {
+      "id": "853786",
+      "anio": "2023",
+      "exp": [
+        "3603-2023"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/853786.3603-2023.pdf"
+    },
+    {
+      "id": "819619",
+      "anio": "2011",
+      "exp": [
+        "2786-2011"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "no_entra_al_fondo",
+      "regla": "no entra al fondo",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/819619.2786-2011.pdf"
+    },
+    {
+      "id": "816676",
+      "anio": "2010",
+      "exp": [
+        "3334-2010"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/816676.3334-2010.pdf"
+    },
+    {
+      "id": "800117",
+      "anio": "2006",
+      "exp": [
+        "2099-2006"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "altera",
+      "regla": "revoca",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/800117.2099-2006.pdf"
+    },
+    {
+      "id": "853527",
+      "anio": "2022",
+      "exp": [
+        "4998-2022"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/853527.4998-2022.pdf"
+    },
+    {
+      "id": "834205",
+      "anio": "2016",
+      "exp": [
+        "2135-2016",
+        "2154-2016 ",
+        "2438-2016"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/834205.2135-2016,%202154-2016%20y%202438-2016.pdf"
+    },
+    {
+      "id": "849955",
+      "anio": "2021",
+      "exp": [
+        "5167-2021"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/849955.5167-2021.pdf"
+    },
+    {
+      "id": "835903",
+      "anio": "2004",
+      "exp": [
+        "424-2004"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/835903.424-2004.pdf"
+    },
+    {
+      "id": "811660",
+      "anio": "2008",
+      "exp": [
+        "3464-2008"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/811660.3464-2008.pdf"
+    },
+    {
+      "id": "808248",
+      "anio": "2006",
+      "exp": [
+        "1736-2006"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/808248.1736-2006.pdf"
+    },
+    {
+      "id": "849377",
+      "anio": "2021",
+      "exp": [
+        "5543-2021"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/849377.5543-2021.pdf"
+    },
+    {
+      "id": "834386",
+      "anio": "2016",
+      "exp": [
+        "5600-2016"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/834386.5600-2016.pdf"
+    },
+    {
+      "id": "808443",
+      "anio": "2009",
+      "exp": [
+        "3226-2009"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/808443.3226-2009.pdf"
+    },
+    {
+      "id": "809039",
+      "anio": "2009",
+      "exp": [
+        "3785-2009"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/809039.3785-2009.pdf"
+    },
+    {
+      "id": "841901",
+      "anio": "2018",
+      "exp": [
+        "5210-2018"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/841901.5210-2018.pdf"
+    },
+    {
+      "id": "802493",
+      "anio": "2007",
+      "exp": [
+        "1125-2007"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/802493.1125-2007.pdf"
+    },
+    {
+      "id": "852807",
+      "anio": "2023",
+      "exp": [
+        "2375-2023 ",
+        "2392-2023"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/852807.2375-2023.pdf"
+    },
+    {
+      "id": "825697",
+      "anio": "2013",
+      "exp": [
+        "1690-2013 ",
+        "1758-2013"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/825697.1690-2013.pdf"
+    },
+    {
+      "id": "836342",
+      "anio": "2013",
+      "exp": [
+        "1980-2013"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "altera",
+      "regla": "confirma con modificacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/836342.1980-2013.pdf"
+    },
+    {
+      "id": "820274",
+      "anio": "2011",
+      "exp": [
+        "2950-2011"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "aclaracion_ampliacion",
+      "regla": "auto de aclaracion o ampliacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/820274.2950-2011.pdf"
+    },
+    {
+      "id": "852987",
+      "anio": "2022",
+      "exp": [
+        "5177-2022"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/852987.5177-2022.pdf"
+    },
+    {
+      "id": "829461",
+      "anio": "2014",
+      "exp": [
+        "5939-2014"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/829461.5939-2014.pdf"
+    },
+    {
+      "id": "807170",
+      "anio": "2005",
+      "exp": [
+        "2887-2005"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/807170.2887-2005.pdf"
+    },
+    {
+      "id": "792104",
+      "anio": "2004",
+      "exp": [
+        "31-2004"
+      ],
+      "tipo": "Inconstitucionalidad de Carácter General",
+      "efecto": "ambiguo",
+      "regla": null,
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/792104.31-2004.pdf"
+    },
+    {
+      "id": "819496",
+      "anio": "2011",
+      "exp": [
+        "1790-2011"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/819496.1790-2011.pdf"
+    },
+    {
+      "id": "791442",
+      "anio": "2002",
+      "exp": [
+        "1223-2002"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791442.1223-2002.pdf"
+    },
+    {
+      "id": "838778",
+      "anio": "2017",
+      "exp": [
+        "3824-2017"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/838778.3824-2017.pdf"
+    },
+    {
+      "id": "834984",
+      "anio": "2017",
+      "exp": [
+        "284-2017"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/834984.284-2017.pdf"
+    },
+    {
+      "id": "799808",
+      "anio": "2004",
+      "exp": [
+        "1337-2004"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/799808.1337-2004.pdf"
+    },
+    {
+      "id": "830563",
+      "anio": "2015",
+      "exp": [
+        "4007-2015"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/830563.4007-2015.pdf"
+    },
+    {
+      "id": "791485",
+      "anio": "2002",
+      "exp": [
+        "676-2002"
+      ],
+      "tipo": "Amparo en Única Instancia",
+      "efecto": "sin_decision_inferior",
+      "regla": "resuelve el amparo en unica instancia",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/791485.676-2002.pdf"
+    },
+    {
+      "id": "821070",
+      "anio": "2012",
+      "exp": [
+        "2149-2012"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/821070.2149-2012.pdf"
+    },
+    {
+      "id": "843042",
+      "anio": "2019",
+      "exp": [
+        "2513-2019"
+      ],
+      "tipo": "Apelación de Sentencia de Amparo",
+      "efecto": "mantiene",
+      "regla": "sin lugar la apelacion",
+      "url": "https://jurisprudencia.cc.gob.gt/Sentencias/843042.2513-2019.pdf"
+    }
+  ]
+}
