@@ -124,7 +124,11 @@ def _anio(expedientes: list[str] | None) -> int | None:
 def _lineas(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         return []
-    return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+    return [
+        json.loads(linea)
+        for linea in path.read_text(encoding="utf-8").splitlines()
+        if linea.strip()
+    ]
 
 
 def construir(raiz: Path, destino: Path) -> list[Carga]:
