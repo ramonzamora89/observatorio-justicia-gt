@@ -14,6 +14,7 @@ import typer
 
 from observatorio_gt import atributos as atributos_mod
 from observatorio_gt import censo, idcheck, muestreo
+from observatorio_gt import estudio_apelaciones as estudio
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
 from observatorio_gt.extractors import deterministic, llm
@@ -332,6 +333,40 @@ def cc_atributos(
     if progreso.detenido_por:
         typer.echo(f"\nDETENIDO: {progreso.detenido_por}", err=True)
         typer.echo("Volver a lanzar el comando continua donde iba.", err=True)
+        raise typer.Exit(code=3)
+
+
+@cc_app.command("estudio-apelaciones")
+def cc_estudio(
+    config: Path = typer.Option(DEFAULT_CONFIG),
+    atributos_path: Path = typer.Option(Path("data/processed/cc_ptmp/atributos.jsonl")),
+    censo_path: Path = typer.Option(Path("data/processed/cc_ptmp/censo.jsonl")),
+    salida: Path = typer.Option(Path("data/processed/cc_ptmp/apelaciones.jsonl")),
+    por_periodo: int = typer.Option(500),
+    max_peticiones: int = typer.Option(5000),
+    pretty: bool = typer.Option(False),
+) -> None:
+    """Lee el punto resolutivo real de una muestra de apelaciones, por periodo."""
+    configure(pretty=pretty)
+    cfg = load_source_config(config)
+    policy = HttpPolicy(
+        user_agent=cfg.user_agent, requests_per_second=cfg.requests_per_second,
+        jitter=cfg.jitter, timeout_s=cfg.timeout_s, max_attempts=cfg.max_attempts,
+        max_requests_per_run=max_peticiones,
+    )
+    client = PoliteClient(policy, DiskCache(cfg.cache_root, ttl_s=cfg.cache_ttl_hours * 3600))
+    seleccion = estudio.muestrear_periodos(
+        atributos_path, censo_path, por_periodo=por_periodo
+    )
+    typer.echo(f"muestra: {len(seleccion):,} apelaciones en {len(estudio.PERIODOS)} periodos")
+    with client:
+        prog = estudio.procesar(client, seleccion, salida)
+    typer.echo(f"\nprocesados        : {prog.procesados:,}")
+    typer.echo(f"clasificados regla: {prog.por_regla:,}")
+    typer.echo(f"pendientes modelo : {prog.pendientes_modelo:,}")
+    typer.echo(f"descargas fallidas: {prog.fallidos:,}")
+    if prog.detenido_por:
+        typer.echo(f"\nDETENIDO: {prog.detenido_por}", err=True)
         raise typer.Exit(code=3)
 
 
