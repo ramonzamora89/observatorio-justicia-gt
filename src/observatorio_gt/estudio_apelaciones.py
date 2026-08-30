@@ -128,7 +128,8 @@ def procesar(
             doc_id = str(fila["id"])
             if doc_id in hechos:
                 continue
-            url, _ = normalize_document_url(fila["pdf"])
+            canonical, _ = normalize_document_url(fila["pdf"])
+            url = canonical
             try:
                 resp, registro = client.get(
                     url, expect=EXPECT_PDF, headers={"Accept-Encoding": "identity"}
@@ -178,6 +179,10 @@ def procesar(
                         "periodo": fila["periodo"],
                         "anio": fila["estrato_anio"],
                         "expedientes": fila.get("expedientes"),
+                        # La URL se guarda aqui: sin ella, revisar a mano exige
+                        # cruzar contra el censo, y una ficha de revision sin
+                        # enlace al documento no se puede revisar.
+                        "url": canonical,
                         "sentido_portal": sentido_de(fila),
                         "efecto": res.efecto.value,
                         "regla": res.regla,

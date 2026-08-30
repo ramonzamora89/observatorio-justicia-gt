@@ -13,7 +13,7 @@ import structlog
 import typer
 
 from observatorio_gt import atributos as atributos_mod
-from observatorio_gt import censo, idcheck, muestreo, tasas
+from observatorio_gt import censo, idcheck, muestreo, tasas, validacion
 from observatorio_gt import estudio_apelaciones as estudio
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
@@ -414,6 +414,46 @@ def cc_tasas(
     }
     out.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
     typer.echo(f"\nresumen: {out}")
+
+
+@cc_app.command("validar")
+def cc_validar(
+    apelaciones: Path = typer.Option(Path("data/processed/cc_ptmp/apelaciones.jsonl")),
+    ficha: Path = typer.Option(Path("data/manifests/cc_ptmp/validacion_resolutivo.csv")),
+    puntuar: bool = typer.Option(
+        False, "--puntuar", help="Lee la ficha ya revisada y calcula la exactitud"
+    ),
+) -> None:
+    """Mide el error del clasificador del resolutivo contra revision humana."""
+    if not puntuar:
+        resumen = validacion.preparar(apelaciones, ficha)
+        typer.echo("\nMuestra de revision, estratificada por regla:\n")
+        for estrato, d in resumen.items():
+            typer.echo(f"  {estrato:<26} {d['n']:>3} de {d['N']:>5}")
+        typer.echo(f"\nficha: {ficha}")
+        typer.echo(
+            "\nAbrela en una hoja de calculo. Para cada fila: abre la URL, lee el "
+            "punto resolutivo del documento y escribe en VEREDICTO_HUMANO uno de "
+            "'altera', 'mantiene' u 'otro'.\n"
+            "Lee el DOCUMENTO, no la columna 'lo_que_leyo_la_maquina': si la regla "
+            "leyo el punto equivocado, esa columna esconde justo el error buscado."
+        )
+        return
+
+    resultados, global_p, (lo, hi), pendientes = validacion.puntuar(ficha)
+    typer.echo(f"\n{'estrato':<26}{'revisados':>10}{'aciertos':>10}{'exactitud':>12}")
+    typer.echo("-" * 58)
+    for r in resultados:
+        t = f"{r.tasa:.1%}" if r.revisados else "—"
+        typer.echo(f"{r.estrato:<26}{r.revisados:>10}{r.aciertos:>10}{t:>12}")
+    typer.echo("-" * 58)
+    typer.echo(f"exactitud global ponderada: {global_p:.1%}   IC 95% [{lo:.1%}, {hi:.1%}]")
+    if pendientes:
+        typer.echo(f"\nfilas sin revisar: {pendientes}", err=True)
+    typer.echo(
+        f"\nCriterio de PRD-1 §16 para el resultado principal: >95%. "
+        f"{'CUMPLE' if global_p > 0.95 else 'NO CUMPLE'}"
+    )
 
 
 @cc_app.command("check-ids")
