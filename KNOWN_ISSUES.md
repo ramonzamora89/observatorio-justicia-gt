@@ -125,6 +125,30 @@ Para obtener la matriz real hay que leer el punto resolutivo del documento. Una
 regex cruda sobre «resuelve: I)» clasificó 45 de 70 (64%); el resto necesita
 lectura. Es trabajo de la capa 3.
 
+### 17. La tendencia del «Con Lugar» era, en buena parte, un artefacto de medicion
+La capa 2 mostraba que la proporcion etiquetada «Con Lugar» pasaba de ~28% a 51%
+entre 2003 y 2023 — un aparente duplicado. Leido el fallo real en 2.000
+apelaciones, la tasa de alteracion de la decision recurrida es:
+
+| Periodo | Etiqueta | Fallo real | La etiqueta subestima |
+|---|---|---|---|
+| 2003-2010 | 26.8% | 45.5% | 18.7 pp |
+| 2011-2015 | 22.6% | 41.0% | 18.4 pp |
+| 2016-2019 | 28.0% | 40.6% | 12.6 pp |
+| 2020-2023 | 42.7% | 51.7% | 9.0 pp |
+
+Dos conclusiones, y ninguna es la que sugeria la etiqueta:
+
+1. **La tasa real siempre fue mucho mas alta** (~45% de media, no ~29%).
+2. **La forma de la serie es distinta.** La etiqueta subia de forma sostenida; el
+   fallo real baja y luego sube. Y buena parte del alza aparente es que la
+   etiqueta se volvio mas fiel con los anos: la brecha se cierra de 18,7 a 9,0
+   puntos.
+
+Lo que si se sostiene: 2020-2023 (51,7%) esta significativamente por encima de
+2011-2015 y 2016-2019 (p<0,001), **pero no de 2003-2010** (p=0,06). El nivel
+actual no es inedito.
+
 ## Deuda menor
 
 ### 9. `.gitignore` menciona `data/pdf/`, que no se usa

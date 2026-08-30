@@ -67,22 +67,30 @@ def extraer_cola(texto: str, caracteres: int = COLA_CARACTERES) -> str:
     return " ".join(texto.split())[-caracteres:]
 
 
-def localizar(texto: str) -> str | None:
-    """Ultimo punto resolutivo de la cola. El ultimo, no el primero: el cuerpo
-    de la sentencia suele citar el resolutivo de la instancia anterior."""
+def candidatos(texto: str) -> list[str]:
+    """Puntos resolutivos del documento, del ultimo al primero.
+
+    Se busca en el documento **entero**, no en la cola. Limitar la busqueda a los
+    ultimos 3.000 caracteres perdia 42 de 2.000 documentos, y no al azar: los
+    fallos con voto razonado traen texto despues del resolutivo, y son mas
+    frecuentes en anos recientes. El sesgo iba justo contra el periodo de interes.
+
+    Se devuelven del ultimo al primero porque el cuerpo de la sentencia suele
+    citar el resolutivo de la instancia anterior, y ese no es el que decide.
+    """
     plano = " ".join(texto.split())
-    ultimo = None
+    encontrados: list[str] = []
     for patron in _INICIO:
         for m in re.finditer(patron, plano, re.I):
-            ultimo = m
-        if ultimo:
+            encontrados.append(plano[m.end() : m.end() + 1200].strip(" :."))
+        if encontrados:
             break
-    if ultimo is None:
-        return None
-    # Ventana amplia: cuando el punto I es la integracion del tribunal, la
-    # lista de magistrados puede ocupar varios cientos de caracteres antes
-    # de que aparezca el fallo.
-    return plano[ultimo.end() : ultimo.end() + 1200].strip(" :.")
+    return list(reversed(encontrados))
+
+
+def localizar(texto: str) -> str | None:
+    cs = candidatos(texto)
+    return cs[0] if cs else None
 
 
 #: Puntos resolutivos que NO deciden el fondo. En muchas sentencias el punto I
@@ -176,4 +184,16 @@ def clasificar(fragmento: str | None) -> Resolutivo:
 
 
 def leer(texto: str) -> Resolutivo:
-    return clasificar(localizar(extraer_cola(texto)))
+    """Clasifica el fallo. Prueba los resolutivos del ultimo al primero.
+
+    Con voto razonado el ultimo «resuelve» puede pertenecer al voto y no al
+    fallo, asi que si el ultimo no decide nada se prueba el anterior.
+    """
+    for fragmento in candidatos(texto):
+        resultado = clasificar(fragmento)
+        if resultado.efecto not in (
+            EfectoSobreLoRecurrido.AMBIGUO,
+            EfectoSobreLoRecurrido.NO_HALLADO,
+        ):
+            return resultado
+    return clasificar(localizar(texto))

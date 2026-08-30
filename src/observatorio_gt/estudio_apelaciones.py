@@ -162,6 +162,7 @@ def procesar(
                 EfectoSobreLoRecurrido.ALTERA,
                 EfectoSobreLoRecurrido.NO_ENTRA_AL_FONDO,
                 EfectoSobreLoRecurrido.SIN_DECISION_INFERIOR,
+                EfectoSobreLoRecurrido.ACLARACION_AMPLIACION,
             ):
                 prog.por_regla += 1
             else:
