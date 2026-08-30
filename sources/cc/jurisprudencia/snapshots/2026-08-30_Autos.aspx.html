@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><title>
+	PORTAL | Jurisprudencia
+</title><link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.css" /><link rel="stylesheet" href="vendor/metisMenu/dist/metisMenu.css" /><link rel="stylesheet" href="vendor/animate.css/animate.css" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css" /><link rel="stylesheet" href="fonts/pe-icon-7-stroke/css/helper.css" /><link rel="stylesheet" href="styles/style.css" /><link rel="stylesheet" href="styles/portal.css" />
+    <script src="vendor/jquery/dist/jquery.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    
+</head>
+<body class="fixed-navbar fixed-sidebar">
+    <div class="splash">
+        <div class="color-line"></div>
+        <div class="splash-title">
+            <h1>Portal de Jurisprudencia</h1>
+            <div class="spinner">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+        </div>
+    </div>
+    <header>
+        <button class="hide-menu burger">
+            <i class="fa fa-bars fa-2x"></i>
+        </button>
+        <img src="images/logos/logoCC.gif" alt="C.C. logo" class="bannerimg" style="margin-left: 18rem" />
+        <h1 style="font-weight: bold; color: darkblue">Sistema de Consulta de Jurisprudencia Constitucional</h1>
+        <img src="images/logos/logo_unidad.png" alt="Jurisprudencia y Gaceta" class="bannerimg" style="margin-right: 18rem" />
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="background-color: #081475; color: white">
+                        <h2>Portal de Jurisprudencia</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <aside id="menu">
+                    <div id="navigation">
+                        <ul class="nav" id="side-menu">
+                            <li><a style="text-transform: none;" href="Inicio.aspx"><span class="nav-label">Inicio</span></a></li>
+                            <li>
+                                <a href="#" style="text-transform: none;"><span class="nav-label">Búsquedas</span><span class="fa fa-plus"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li><a href="TextoLibre.aspx">Texto libre</a></li>
+                                    <li><a href="Expediente.aspx">Número de expediente</a></li>
+                                    <li><a href="Estructura.aspx">Por lapso</a></li>
+                                    <li><a href="Temas.aspx">Por tipo de proceso y tema</a></li>
+                                    <li><a href="Autos.aspx">Autos</a></li>
+                                    <li><a href="Internacionales.aspx" style="text-transform: none;">Estándares internacionales</a></li>
+                                    <li><a href="ResolucionInteres.aspx" style="text-transform: none;">Resoluciones de interés </a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#" style="text-transform: none;"><span class="nav-label">Ayuda</span><span class="fa fa-plus"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li><a href="SolicitudDatos.aspx">Asistencia para búsqueda jurisprudencial</a></li>
+                                    <li><a href="ProteccionDatos.aspx">Solicitud de protección de datos</a></li>
+                                    <li><a href="Contactenos.aspx">Contáctenos</a></li>
+                                    <li><a href="Sugerencias.aspx">Sugerencias</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#" style="text-transform: none;"><span class="nav-label">Otros enlaces</span><span class="fa fa-plus"></span> </a>
+                                <ul class="nav nav-second-level">
+                                    <li><a href="Enlaces.aspx">Enlaces de interés</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <main id="wrapper">
+                    <form method="post" action="./Autos.aspx" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="94BC2E95" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="1vzAM/VPRcPUprxuTKtkNpXdS2sx64H58/8xqtkeUnW51elpuP0xUqlrfops9EzpaW4T4AFv+gXkfQtBNBm54upjUbFpAoN2CyYNbxREYBV0HOOIM/M7nhQ/3YWNu3ga62aVaOvpjajLLsiqiEeF+PBLNXarhdcyCaFjeQKMXfCs6Rs+vFQ0b+PCAHiZPoBJiQ8rQw3FCZ5IZ+vSYmg4fJZikxrcO4chrE+Aa1ErdWKjkDhMmFL5GkVdzIMBRsXwrZqMUrmpX7kDkgAmFZKoai9xdf08f2Be402jSeJMQDa5HoVMJXBYEuKj7PYItCFzeF0C8a22g5mAsFVGp3pGjjkWMZdLifQOI9QTi6VKcLR1nRcwQvBUO8iMm/8dLTS2K79uALK7nKsGjroeYrTxtkab6ioJRIvOQF4pz5rHXLfHzFRFJDHnr1oFE9e7pnsV+AkJ0YsD8FNhvkgAC1nu40ArT8bAP7/0/RKGTp+zB6KdRKrVDQi2XFcrfrjTCN4riVY7mlVop+RW3VNdR5eRTT6RdQ0n9mU3TZ7NavQkNWU7mD+dxXBMSiCkR5dTRhOX9Vxk/l6QsuUYu/TiyqoQWzQSfaw9Yvm8gvaoYbmok328l8QwgFZs3H8d7Qu6/niWVIoSjbw+Fj122JNhyl1kT4UOFH9D6ue5cpJOOSw1jB7VpP8Og18KPgzOAa31oD7aywagaoc/gM+Q0/yU6XpFxXdcACkQoZNWqtH34dqReCZsdusg09cQ7oyPIUIaOd9aGVSZPBuFDNnNVBvlMZVf/MxQtGVSVjH0I00oX0z3Gh9l5PI0vQuGM6R2ewKXjApO21HwuKhbDObp3VGI9qjHl9M99zJUBCI1JB5u3NeP8+bzEfJ8l2VWVGXkHnGFUZ8ylO3CsgdqH4hf5OC7siglFthHHu0xQtTBfQWa6dKsfJ7BequTBWw+BVbBN1itFXPVduBKLJ3vTx454mPCxwc+Kw==" />
+                        <div>
+                            
+    <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="vendor/metisMenu/dist/metisMenu.css" />
+    <link rel="stylesheet" href="vendor/animate.css/animate.css" />
+    <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="vendor/datatables.net-bs/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" href="styles/style.css">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="hpanel">
+                <div class="panel-body">
+                    <div class="panel-body">
+                        <a class="small-header-action" href="#">
+                            <div class="clip-header">
+                                <i class="fa fa-arrow-up"></i>
+                            </div>
+                        </a>
+                        <h5 class="font-light m-b-xs">Búsqueda de autos por tipo
+                        </h5>
+                        <table id="example1" class="table table-striped table-bordered table-hover small table-responsive ">
+                            <tbody>
+                                <tr>
+                                    <td style="width:auto">
+                                        <select name="ctl00$ContentPlaceHolder1$drTipo" id="ContentPlaceHolder1_drTipo" class="form-control">
+	<option value="">Sin Selecci&#243;n</option>
+	<option value="920">Apelaci&#243;n de auto de amparo</option>
+	<option value="921">Apelaci&#243;n de auto de suspensi&#243;n</option>
+	<option value="923">Auto de aclaraci&#243;n</option>
+	<option value="925">Auto de aclaraci&#243;n y ampliaci&#243;n</option>
+	<option value="924">Auto de ampliaci&#243;n</option>
+	<option value="922">Auto de debida ejecuci&#243;n</option>
+	<option value="929">Auto de suspensi&#243;n</option>
+	<option value="930">Auto para mejor fallar</option>
+	<option value="931">Desistimiento</option>
+	<option value="928">Duda de competencia</option>
+	<option value="927">Error substancial en el procedimiento</option>
+	<option value="926">Ocurso en queja</option>
+	<option value="933">Otras</option>
+	<option value="932">Sobreseimiento</option>
+
+</select>
+                                    </td>
+                                    <td style="width:auto">
+                                        <a href="#ContentPlaceHolder1_tvCategoria_SkipLink">Omitir vínculos de navegación.</a><div id="ContentPlaceHolder1_tvCategoria">
+	<table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías&#39;)"><img src="/ptmp/WebResource.axd?d=-n2KnhPEOy8tY2UhU96Dm56U9LhqyJyPdPBP2wiOCfhtA_C1txxLNFvgwPPhstole01voYOHcNekczjAMVia2Yl_oPtEqMVg50V_T01UFyM1&amp;t=639191680340000000" alt="Contraer Categorías" title="Contraer Categorías" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías&#39;)" id="ContentPlaceHolder1_tvCategoriat0">Categorías</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\908&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Aclaración y Ampliación" title="Expandir Aclaración y Ampliación" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\908&#39;)" id="ContentPlaceHolder1_tvCategoriat1">Aclaración y Ampliación</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\812&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Admisibilidad" title="Expandir Admisibilidad" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\812&#39;)" id="ContentPlaceHolder1_tvCategoriat6">Admisibilidad</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\816&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Amparo provisional" title="Expandir Amparo provisional" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\816&#39;)" id="ContentPlaceHolder1_tvCategoriat11">Amparo provisional</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\913&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Criterios en materia de Inconstitucionalidad" title="Expandir Criterios en materia de Inconstitucionalidad" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\913&#39;)" id="ContentPlaceHolder1_tvCategoriat24">Criterios en materia de Inconstitucionalidad</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\900&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Error substancial en el procedimiento" title="Expandir Error substancial en el procedimiento" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\900&#39;)" id="ContentPlaceHolder1_tvCategoriat33">Error substancial en el procedimiento</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\887&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Ocurso en Queja" title="Expandir Ocurso en Queja" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\887&#39;)" id="ContentPlaceHolder1_tvCategoriat41">Ocurso en Queja</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\880&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Período probatorio" title="Expandir Período probatorio" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\880&#39;)" id="ContentPlaceHolder1_tvCategoriat58">Período probatorio</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\827&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Suspensión definitiva del trámite del amparo" title="Expandir Suspensión definitiva del trámite del amparo" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\827&#39;)" id="ContentPlaceHolder1_tvCategoriat65">Suspensión definitiva del trámite del amparo</a></td>
+		</tr>
+	</table><table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><table width="20">
+				<tr>
+					<td></td>
+				</tr>
+			</table></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;tCategorías\\876&#39;)"><img src="/ptmp/WebResource.axd?d=Wt-oJLHV-dsfkxJN06L-Wc6EdnQ-qGDjNye3lcjf6MLmkoipOCJXtZF7ZptEp-zkAmS6uWk2Afug_CPSjdfyb_4lYwn6iy634-ylKlGV86A1&amp;t=639191680340000000" alt="Expandir Terceros interesados" title="Expandir Terceros interesados" border="0" /></a></td><td class="rootnode" nowrap="nowrap"><a class="rootnode" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$tvCategoria&#39;,&#39;sCategorías\\876&#39;)" id="ContentPlaceHolder1_tvCategoriat124">Terceros interesados</a></td>
+		</tr>
+	</table>
+</div><a id="ContentPlaceHolder1_tvCategoria_SkipLink"></a>
+                                    </td>
+                                    <td style="width:auto">
+                                        <input type="submit" name="ctl00$ContentPlaceHolder1$BuscarByCategoria" value="Buscar" id="ContentPlaceHolder1_BuscarByCategoria" class="btn btn-sm btn-primary m-t-n-xs" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5 class="font-light m-b-xs">Búsqueda de autos por texto
+                        </h5>
+                        <table id="example2" class="table table-striped table-bordered table-hover small table-responsive ">
+                            <tbody>
+                                <tr>
+                                    <td style="width: auto" colspan="4">
+                                        <input name="ctl00$ContentPlaceHolder1$search" type="text" id="ContentPlaceHolder1_search" placeholder="Ingrese una o varias palabras clave." class="form-control" />
+                                    </td>
+                                    <td style="width: auto">
+                                        <input type="submit" name="ctl00$ContentPlaceHolder1$Buscar" value="Buscar" id="ContentPlaceHolder1_Buscar" class="btn btn-sm btn-primary m-t-n-xs" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5 class="font-light m-b-xs">Búsqueda de autos por expediente
+                        </h5>
+                        <table id="example3" class="table table-striped table-bordered table-hover small table-responsive">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input name="ctl00$ContentPlaceHolder1$txtNoResolucion" type="text" id="ContentPlaceHolder1_txtNoResolucion" placeholder="Ingrese número de expediente." class="form-control" />
+                                        <p class="small">
+                                            Nota: Puede ingresar varios numeros de expediente a la vez, separados por un espacio en blanco, Ej. 1920-2003 1930-2007 o bien solo parte del numero, Ej. 1920 o una combinación de ambas, Ej. 1920-2003 1930
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <label for="fInicio">Desde : </label>
+                                        <input name="ctl00$ContentPlaceHolder1$fInicio" type="date" id="ContentPlaceHolder1_fInicio" value="Fecha Inicio" />
+                                    </td>
+                                    <td>
+                                        <label for="fFinal">Hasta : </label>
+                                        <input name="ctl00$ContentPlaceHolder1$fFinal" type="date" id="ContentPlaceHolder1_fFinal" value="Fecha Inicio" />
+                                    </td>
+                                    <td>
+                                        <input type="submit" name="ctl00$ContentPlaceHolder1$btnBuscarPorNumero" value="Buscar" id="ContentPlaceHolder1_btnBuscarPorNumero" class="btn btn-sm btn-primary m-t-n-xs" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="panel-body">
+                        <table id="Expedientes" class="table table-striped table-bordered table-hover small table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>Concordancia</th>
+                                    <th>Expediente(s)</th>
+                                    <th>Fecha resolución</th>
+                                    <th>Categor&iacute;a</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Archivo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+
+                </div>
+                <!-- /.content -->
+            </div>
+        </div>
+    </div>
+
+    <input name="ctl00$ContentPlaceHolder1$pagina" type="hidden" id="ContentPlaceHolder1_pagina" value="0" />
+    <script src="vendor/jquery/dist/jquery.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/jquery-ui/jquery-ui.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/slimScroll/jquery.slimscroll.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/bootstrap/dist/js/bootstrap.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/datatables/media/js/jquery.dataTables.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/datatables.net-bs/js/dataTables.bootstrap.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script type="3ea41a121f3ca474f88a508e-text/javascript">
+        jQuery(document).ready(function ($) {
+            $('#Expedientes').DataTable(
+                {
+                    "language": {
+                        "url": "Content/Spanish.json"
+                    }
+                });
+            $(".catnode").click(function () {
+                return false;
+            });
+            $(".rootnode").click(function () {
+                return false;
+            });
+        });
+    </script>
+
+                        </div>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </div>
+    <!-- Vendor scripts -->
+    <script src="vendor/jquery-ui/jquery-ui.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/slimScroll/jquery.slimscroll.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/jquery-flot/jquery.flot.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/jquery-flot/jquery.flot.resize.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/jquery-flot/jquery.flot.pie.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/flot.curvedlines/curvedLines.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/jquery.flot.spline/index.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/metisMenu/dist/metisMenu.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/iCheck/icheck.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/peity/jquery.peity.min.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+    <script src="vendor/sparkline/index.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+
+    <!-- App scripts -->
+    <script src="scripts/homer.js" type="3ea41a121f3ca474f88a508e-text/javascript"></script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="3ea41a121f3ca474f88a508e-|49" defer></script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a330d3cc1eaf171c',t:'MTc4ODA2MTc4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+

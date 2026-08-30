@@ -12,7 +12,8 @@ from pathlib import Path
 import structlog
 import typer
 
-from observatorio_gt import censo, idcheck
+from observatorio_gt import atributos as atributos_mod
+from observatorio_gt import censo, idcheck, muestreo
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
 from observatorio_gt.extractors import deterministic, llm
@@ -259,6 +260,79 @@ def _imprimir_censo(resumen: censo.CensoResumen, salida: Path, resumen_out: Path
     typer.echo(f"\ncenso   : {salida}")
     typer.echo(f"resumen : {resumen_out}")
     typer.echo(f"\nADVERTENCIA: {resumen.advertencia}")
+
+
+@cc_app.command("muestra")
+def cc_muestra(
+    censo_path: Path = typer.Option(Path("data/processed/cc_ptmp/censo.jsonl")),
+    desde: int = typer.Option(1996, help="Primer anio de la ventana"),
+    hasta: int = typer.Option(2023, help="Ultimo anio de la ventana"),
+    error: float = typer.Option(0.05, help="Margen de error por estrato"),
+    semilla: int = typer.Option(20260829),
+    salida: Path = typer.Option(Path("data/processed/cc_ptmp/muestra.jsonl")),
+    diseno_out: Path = typer.Option(Path("data/manifests/cc_ptmp/diseno_muestral.json")),
+    pretty: bool = typer.Option(True),
+) -> None:
+    """Sortea la muestra estratificada por anio. Reproducible con la misma semilla."""
+    configure(pretty=pretty)
+    seleccion, diseno = muestreo.muestrear(
+        censo_path, anio_desde=desde, anio_hasta=hasta,
+        margen_error=error, semilla=semilla,
+    )
+    muestreo.escribir(seleccion, diseno, salida, diseno_out)
+    typer.echo(f"\nventana        : {desde}-{hasta}  ({len(diseno.estratos)} anios)")
+    typer.echo(f"universo        : {diseno.documentos_en_ventana:,} documentos")
+    typer.echo(f"muestra         : {diseno.n_total:,} documentos")
+    typer.echo(f"margen de error : {error:.0%} por anio, 95% de confianza, p=0.5")
+    typer.echo(f"semilla         : {semilla}  (misma semilla = misma muestra)")
+    typer.echo(f"\nmuestra : {salida}")
+    typer.echo(f"diseno  : {diseno_out}")
+
+
+@cc_app.command("atributos")
+def cc_atributos(
+    config: Path = typer.Option(DEFAULT_CONFIG),
+    muestra_path: Path = typer.Option(Path("data/processed/cc_ptmp/muestra.jsonl")),
+    salida: Path = typer.Option(Path("data/processed/cc_ptmp/atributos.jsonl")),
+    max_peticiones: int = typer.Option(30000, help="Cortacircuitos"),
+    pretty: bool = typer.Option(False, help="Log legible; por defecto JSON"),
+) -> None:
+    """Recoge la ficha de atributos de cada documento de la muestra.
+
+    Reanudable: si se interrumpe, volver a lanzarlo continua donde iba.
+    """
+    configure(pretty=pretty)
+    cfg = load_source_config(config)
+    policy = HttpPolicy(
+        user_agent=cfg.user_agent,
+        requests_per_second=cfg.requests_per_second,
+        jitter=cfg.jitter,
+        timeout_s=cfg.timeout_s,
+        max_attempts=cfg.max_attempts,
+        max_requests_per_run=max_peticiones,
+    )
+    client = PoliteClient(policy, DiskCache(cfg.cache_root, ttl_s=cfg.cache_ttl_hours * 3600))
+    seleccion = [
+        json.loads(linea)
+        for linea in muestra_path.read_text(encoding="utf-8").splitlines()
+        if linea.strip()
+    ]
+
+    with client:
+        robots = client.robots.decision_for(cc_ptmp.ATRIBUTOS_URL)
+        if not robots.allowed:
+            typer.echo(f"robots.txt no permite la fuente: {robots.note}", err=True)
+            raise typer.Exit(code=1)
+        progreso = atributos_mod.recolectar(client, seleccion, salida)
+
+    typer.echo(f"\npedidos        : {progreso.pedidos:,} de {len(seleccion):,}")
+    typer.echo(f"con atributos  : {progreso.con_atributos:,}")
+    typer.echo(f"ficha vacia    : {progreso.sin_atributos:,}")
+    typer.echo(f"no comprobados : {progreso.no_comprobados:,}")
+    if progreso.detenido_por:
+        typer.echo(f"\nDETENIDO: {progreso.detenido_por}", err=True)
+        typer.echo("Volver a lanzar el comando continua donde iba.", err=True)
+        raise typer.Exit(code=3)
 
 
 @cc_app.command("check-ids")
