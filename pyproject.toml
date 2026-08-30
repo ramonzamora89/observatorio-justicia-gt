@@ -11,6 +11,7 @@ dependencies = [
     "lxml>=5.2",
     "structlog>=24.1",
     "typer>=0.12",
+    "anthropic>=0.69",
 ]
 
 [project.scripts]
@@ -49,6 +50,10 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.ruff.lint.per-file-ignores]
 # typer declara sus opciones como defaults de argumento; es su API.
 "src/observatorio_gt/cli.py" = ["B008"]
+
+[[tool.mypy.overrides]]
+module = ["anthropic.*"]
+ignore_missing_imports = true
 
 [tool.mypy]
 python_version = "3.12"

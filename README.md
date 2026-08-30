@@ -29,7 +29,7 @@ normalización ni análisis todavía.**
 
 ```bash
 uv sync                                  # Python 3.12 + dependencias
-uv run pytest                            # 102 tests, ninguno toca la red
+uv run pytest                            # 140 tests, ninguno toca la red
 uv run pytest -m ocr                     # 5 mas: OCR real, lento, opt-in
 uv run obsgt cc-ptmp probe               # 2 peticiones: robots.txt + una a la API
 uv run obsgt cc-ptmp discover --limit 20 # corrida real, limitada por tasa
@@ -129,6 +129,53 @@ midio el OCR **contra el texto del original**. Resultado del 29-08-2026:
 - el texto recuperado pasa la comprobacion de calidad.
 
 Esa medicion es el test `tests/test_ocr_integracion.py`, reejecutable.
+
+## Extraccion de hechos procesales
+
+```bash
+uv run obsgt extract run --solo-deterministico   # sin modelo, sin costo
+export ANTHROPIC_API_KEY=...                     # solo para la ultima capa
+uv run obsgt extract run --limit 5               # con modelo
+```
+
+### Tres capas, y cada campo dice de cual salio
+
+| Capa | Que aporta | Cobertura sobre los 20 |
+|---|---|---|
+| **Portal** | lo que publica `AtributoElastic.aspx` | 64 valores |
+| **Deterministica** | fecha, expediente, tipo, organo, por regla | 55 valores |
+| **Modelo** | solo lo que esta en el cuerpo | los 6 campos restantes |
+
+Sin llamar a ningun modelo se llenan **119 valores en 20 documentos**. Al modelo
+le queda lo que ninguna otra capa puede dar: fechas procesales, resolucion
+impugnada, magistrados firmantes, ponente, citas jurisprudenciales, y el sentido
+del fallo en los 8 documentos donde el portal no lo publica.
+
+### Lo que el esquema hace cumplir
+
+- **`null` es un resultado valido.** Un extractor que nunca devuelve `null`
+  esta inventando.
+- **Un valor sin cita se descarta.** Si el modelo no puede señalar donde lo
+  leyo, no lo leyo.
+- **Una capa mas confiable nunca se sobrescribe.** Lo que publica el portal no
+  lo pisa el modelo.
+- **Version de prompt (con sha256), modelo, commit y tokens** quedan en cada
+  registro. La extraccion es reproducible y auditable meses despues.
+- **No hay ningun campo donde valorar la conducta de una persona.** Se extraen
+  hechos procesales; las clasificaciones analiticas van en otra tabla y con
+  revision humana.
+
+### Fechas escritas en letras
+
+«Guatemala, treinta y uno de octubre de dos mil trece» se resuelve por
+calendario, no por modelo: es reproducible y gratis. Cotejado contra el portal,
+**16 de 16 coinciden** donde el portal publica la fecha, y la regla llena las
+**4** en que el portal la trae vacia.
+
+La fecha se ancla al encabezado del propio tribunal. Tomar la primera fecha del
+texto daba, en 3 de 20 documentos, la de la sentencia **recurrida** -- otro
+tribunal, otro año. Con la latencia como indicador central, eso no es un detalle
+de formato.
 
 ## Estabilidad del identificador
 

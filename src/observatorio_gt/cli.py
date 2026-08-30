@@ -14,6 +14,13 @@ import typer
 from observatorio_gt import idcheck
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
+from observatorio_gt.extractors import deterministic, llm
+from observatorio_gt.extractors.prompts import PROMPT_V1
+from observatorio_gt.extractors.schema import (
+    ExtractionRecord,
+    ExtractionRun,
+    ResolutionFacts,
+)
 from observatorio_gt.logging_setup import configure
 from observatorio_gt.manifest import read_records, sha256_bytes, write_records
 from observatorio_gt.net.cache import DiskCache
@@ -27,7 +34,9 @@ manifest_app = typer.Typer(help="Utilidades de manifest")
 app.add_typer(cc_app, name="cc-ptmp")
 parse_app = typer.Typer(help="Conversion de documentos a texto")
 app.add_typer(manifest_app, name="manifest")
+extract_app = typer.Typer(help="Extraccion de hechos procesales")
 app.add_typer(parse_app, name="parse")
+app.add_typer(extract_app, name="extract")
 
 DEFAULT_CONFIG = Path("config/sources/cc_ptmp.toml")
 log = structlog.get_logger("cli")
@@ -286,6 +295,114 @@ def parse_run(
         typer.echo(f"\nPARA REVISION HUMANA ({len(revisar)}):", err=True)
         for r in revisar:
             typer.echo(f"  ! {r}", err=True)
+
+
+@extract_app.command("run")
+def extract_run(
+    manifest: Path = typer.Option(Path("data/manifests/cc_ptmp/discovery_manifest.jsonl")),
+    parse_manifest: Path = typer.Option(Path("data/manifests/cc_ptmp/parse_manifest.jsonl")),
+    out: Path = typer.Option(Path("data/manifests/cc_ptmp/extraction_manifest.jsonl")),
+    limit: int | None = typer.Option(None),
+    solo_deterministico: bool = typer.Option(
+        False, "--solo-deterministico",
+        help="No llama al modelo. Util para ver cobertura sin gastar nada.",
+    ),
+    model: str = typer.Option(llm.MODELO_POR_DEFECTO, help="Modelo a usar"),
+    pretty: bool = typer.Option(True),
+) -> None:
+    """Extrae hechos procesales: portal, reglas deterministicas y, si se pide, modelo."""
+    configure(pretty=pretty)
+    parses = {
+        json.loads(line)["sha256"]: json.loads(line)
+        for line in parse_manifest.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+
+    cliente: llm.ModelClient | None = None
+    if not solo_deterministico:
+        try:
+            cliente = llm.AnthropicClient(model=model)
+        except Exception as exc:  # noqa: BLE001 - falta de credencial es lo normal aqui
+            typer.echo(
+                f"No se pudo crear el cliente del modelo ({exc}).\n"
+                "Exporta ANTHROPIC_API_KEY, o vuelve a correr con --solo-deterministico.",
+                err=True,
+            )
+            raise typer.Exit(code=2) from exc
+
+    commit, _dirty = _git_state()
+    cobertura: Counter[str] = Counter()
+    procedencia: Counter[str] = Counter()
+    lineas: list[str] = []
+    uso_total: Counter[str] = Counter()
+
+    for record in list(read_records(manifest))[:limit]:
+        doc = record.document
+        sha = doc.sha256 if doc else None
+        parsed = parses.get(sha or "")
+        if not parsed or not parsed.get("text_path"):
+            typer.echo(f"  sin texto para {record.source_document_id}: no comprobado", err=True)
+            continue
+
+        texto = Path(parsed["text_path"]).read_text(encoding="utf-8")
+        hechos = deterministic.extraer(texto, record.metadata.atributos)
+        avisos: list[str] = []
+        uso: dict[str, int] = {}
+        prompt_version = prompt_sha = modelo_usado = None
+
+        if cliente is not None:
+            try:
+                hechos, uso, avisos = llm.extraer_con_modelo(texto, hechos, cliente)
+                prompt_version = PROMPT_V1.version
+                prompt_sha = PROMPT_V1.sha256
+                modelo_usado = model
+            except (llm.ExtractionRefused, llm.ExtractionInvalid) as exc:
+                avisos.append(f"extraccion con modelo fallida: {type(exc).__name__}: {exc}")
+        for clave, valor in uso.items():
+            uso_total[clave] += valor
+
+        for nombre in hechos.model_fields:
+            campo = getattr(hechos, nombre)
+            if campo.consta:
+                cobertura[nombre] += 1
+                procedencia[str(campo.provenance)] += 1
+
+        lineas.append(
+            ExtractionRecord(
+                record_id=record.record_id,
+                source_document_id=record.source_document_id,
+                source_url=str(record.source.endpoint),
+                document_sha256=sha,
+                text_path=parsed["text_path"],
+                facts=hechos,
+                run=ExtractionRun(
+                    extractor_version=llm.EXTRACTOR_VERSION,
+                    prompt_version=prompt_version,
+                    prompt_sha256=prompt_sha,
+                    model=modelo_usado,
+                    git_commit=commit,
+                    extracted_at=llm.ahora_iso(),
+                    input_tokens=uso.get("input_tokens"),
+                    output_tokens=uso.get("output_tokens"),
+                    note="solo capa deterministica" if cliente is None else None,
+                ),
+                warnings=avisos,
+            ).model_dump_json()
+        )
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(lineas) + ("\n" if lineas else ""), encoding="utf-8")
+
+    typer.echo(f"\ndocumentos     : {len(lineas)}")
+    typer.echo("cobertura por campo:")
+    for nombre in ResolutionFacts.model_fields:
+        n = cobertura[nombre]
+        marca = "" if n else "   (ninguno: no consta o no comprobado)"
+        typer.echo(f"  {nombre:<28} {n:>2}/{len(lineas)}{marca}")
+    typer.echo(f"\nprocedencia    : {dict(procedencia)}")
+    if uso_total:
+        typer.echo(f"tokens         : {dict(uso_total)}")
+    typer.echo(f"manifest       : {out}")
 
 
 @manifest_app.command("verify")
