@@ -29,7 +29,7 @@ normalización ni análisis todavía.**
 
 ```bash
 uv sync                                  # Python 3.12 + dependencias
-uv run pytest                            # 172 tests, ninguno toca la red
+uv run pytest                            # 188 tests, ninguno toca la red
 uv run pytest -m ocr                     # 5 mas: OCR real, lento, opt-in
 uv run obsgt cc-ptmp probe               # 2 peticiones: robots.txt + una a la API
 uv run obsgt cc-ptmp discover --limit 20 # corrida real, limitada por tasa
@@ -74,6 +74,51 @@ Estas 20 resoluciones **no son una muestra**. Las consultas semilla determinan
 qué sale. Sin denominador no hay patrón, y este collector todavía no lo produce.
 
 Problemas conocidos y decisiones pendientes: `KNOWN_ISSUES.md`.
+
+## El denominador: censo del universo publicado
+
+```bash
+uv run obsgt cc-ptmp censo               # ~71 peticiones, ~3 minutos, sin modelo
+uv run obsgt cc-ptmp censo --solo-resumen  # rehace el agregado sin red
+```
+
+Sin denominador no hay patron: una lista de resoluciones que apuntan en una
+direccion no prueba nada sin saber cuantas dicto ese organo y en que sentido.
+Este censo es la razon de existir del proyecto.
+
+**Como se enumera.** La busqueda por expediente coincide **por prefijo del
+numero**: `5577` devuelve `5577-2015`, `5577-2017`, `5577-2021`... y `1` devuelve
+los 14.166 expedientes que empiezan con 1. Como todo numero empieza por un digito
+del 1 al 9, nueve prefijos cubren el universo sin solaparse.
+
+### Resultado (29-08-2026)
+
+**66,025 documentos, 68,150 expedientes**, cobertura 1986-2026.
+
+| Tipo de expediente | Documentos | | Decada | Documentos |
+|---|---|---|---|---|
+| Apelacion de Sentencia de Amparo | 48,168 | | 1980s | 709 |
+| Amparo en Unica Instancia | 13,243 | | 1990s | 4,490 |
+| Inconstitucionalidad en Caso Concreto | 2,549 | | 2000s | 14,153 |
+| Inconstitucionalidad de Caracter General | 1,972 | | 2010s | 28,800 |
+| Opinion Consultiva | 66 | | 2020s | 17,912 |
+
+### Lo que este numero NO es
+
+**Es el universo de lo que la Corte publica, no de lo que resuelve.** Se comprobo
+que hay numeros de expediente sin resultado (`2-2020` devuelve cero): la CC
+publica jurisprudencia seleccionada. Confundir ambas cosas es el sesgo de
+seleccion que `PRD-1.md` §19 advierte, y contaminaria cualquier tasa calculada
+encima. El resumen lleva esa advertencia dentro del propio archivo.
+
+**Calidad de la fuente, medida:** 43 expedientes de 68,150 (0.06%) tienen
+un ano imposible de derivar -- `1298-20158`, `1014-1996a`, `196-69`. **No se
+corrigen**: quedan contados aparte. Y 467 documentos aparecian en dos prefijos a
+la vez porque acumulan expedientes de numeros distintos; se deduplican por `id`,
+sin lo cual el universo saldria inflado.
+
+El censo completo pesa 17 MB y no va a git; el resumen agregado, que es el
+denominador, si se versiona.
 
 ## Parsing y OCR
 

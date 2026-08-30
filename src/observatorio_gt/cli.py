@@ -6,12 +6,13 @@ import json
 import subprocess
 import uuid
 from collections import Counter
+from dataclasses import asdict
 from pathlib import Path
 
 import structlog
 import typer
 
-from observatorio_gt import idcheck
+from observatorio_gt import censo, idcheck
 from observatorio_gt.collectors import cc_ptmp
 from observatorio_gt.config import load_source_config
 from observatorio_gt.extractors import deterministic, llm
@@ -177,6 +178,87 @@ def discover(
             "Esto es 'no comprobado', no 'no existen mas'.",
             err=True,
         )
+
+
+@cc_app.command("censo")
+def cc_censo(
+    config: Path = typer.Option(DEFAULT_CONFIG),
+    salida: Path = typer.Option(
+        Path("data/processed/cc_ptmp/censo.jsonl"), help="Censo completo (fuera de git)"
+    ),
+    resumen_out: Path = typer.Option(
+        Path("data/manifests/cc_ptmp/censo_resumen.json"),
+        help="Resumen agregado (esto si se versiona)",
+    ),
+    pagina: int = typer.Option(censo.PAGINA, help="Tamano de pagina"),
+    max_peticiones: int = typer.Option(
+        300, help="Cortacircuitos. El censo completo necesita ~80."
+    ),
+    solo_resumen: bool = typer.Option(
+        False, "--solo-resumen", help="Rehace el resumen desde el censo en disco, sin red"
+    ),
+    pretty: bool = typer.Option(True),
+) -> None:
+    """Enumera el universo de resoluciones PUBLICADAS por la CC: el denominador.
+
+    Sin denominador no hay patron. Este comando no descarga documentos ni llama a
+    ningun modelo: construye el indice de que existe publicado.
+    """
+    configure(pretty=pretty)
+    if solo_resumen:
+        resumen = censo.resumir_desde_archivo(salida)
+        resumen_out.parent.mkdir(parents=True, exist_ok=True)
+        resumen_out.write_text(
+            json.dumps(asdict(resumen), ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        _imprimir_censo(resumen, salida, resumen_out)
+        return
+
+    cfg = load_source_config(config)
+    policy = HttpPolicy(
+        user_agent=cfg.user_agent,
+        requests_per_second=cfg.requests_per_second,
+        jitter=cfg.jitter,
+        timeout_s=cfg.timeout_s,
+        max_attempts=cfg.max_attempts,
+        max_requests_per_run=max_peticiones,
+    )
+    client = PoliteClient(policy, DiskCache(cfg.cache_root, ttl_s=cfg.cache_ttl_hours * 3600))
+
+    with client:
+        robots = client.robots.decision_for(cc_ptmp.ENDPOINT_EXPEDIENTE.url)
+        if not robots.allowed:
+            typer.echo(f"robots.txt no permite la fuente: {robots.note}", err=True)
+            raise typer.Exit(code=1)
+        resumen = censo.censar(client, salida, pagina=pagina)
+
+    resumen_out.parent.mkdir(parents=True, exist_ok=True)
+    resumen_out.write_text(
+        json.dumps(asdict(resumen), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+    _imprimir_censo(resumen, salida, resumen_out)
+
+
+def _imprimir_censo(resumen: censo.CensoResumen, salida: Path, resumen_out: Path) -> None:
+    typer.echo(f"\ndocumentos unicos  : {resumen.documentos_unicos:,}")
+    typer.echo(f"expedientes unicos : {resumen.expedientes_unicos:,}")
+    typer.echo(f"peticiones         : {resumen.peticiones}")
+    typer.echo(f"sin fecha sentencia: {resumen.sin_fecha_sentencia:,}")
+    typer.echo("\npor tipo de expediente:")
+    for tipo, n in list(resumen.por_tipo.items())[:12]:
+        typer.echo(f"  {n:>7,}  {tipo}")
+    anios = sorted(resumen.por_anio)
+    if anios:
+        typer.echo(f"\ncobertura temporal : {anios[0]} - {anios[-1]}")
+    if resumen.anio_no_derivable:
+        typer.echo(f"\nanio no derivable  : {len(resumen.anio_no_derivable)} expedientes")
+        for exp, motivo in list(resumen.anio_no_derivable.items())[:5]:
+            typer.echo(f"  {exp:<16} {motivo}")
+        typer.echo("  (no se corrigen: son erratas de la fuente, y quedan contadas aparte)")
+    typer.echo(f"\ncenso   : {salida}")
+    typer.echo(f"resumen : {resumen_out}")
+    typer.echo(f"\nADVERTENCIA: {resumen.advertencia}")
 
 
 @cc_app.command("check-ids")
