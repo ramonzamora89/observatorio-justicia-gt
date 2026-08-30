@@ -140,3 +140,21 @@ def test_los_no_verificados_se_marcan_pero_no_se_borran() -> None:
     assert hechos.ponente.value == "Alguien", "no se borra"
     assert "EVIDENCIA" in (hechos.ponente.note or "")
     assert avisos and "ponente" in avisos[0]
+
+
+def test_un_guion_partido_por_el_salto_de_linea_no_invalida_la_cita() -> None:
+    """`pdftotext` deja «setenta y dos-\\nnoventa» como «setenta y dos- noventa».
+
+    Quien cita el pasaje escribe «dos-noventa». Exigir ese espacio marcaba como
+    inventada una cita textualmente fiel.
+    """
+    doc = normalizar("en el expediente setenta y dos- noventa y dos, consta que")
+    assert aparece("expediente setenta y dos-noventa y dos", doc)
+
+
+def test_la_licencia_del_guion_no_afloja_lo_demas() -> None:
+    """Sigue sin aceptar sinonimos, reordenamientos ni elisiones."""
+    doc = normalizar(DOCUMENTO)
+    assert not aparece("Notifíquese ... devuélvase los antecedentes", doc), "sin elisiones"
+    assert not aparece("devuélvase los antecedentes y notifíquese", doc), "sin reordenar"
+    assert not aparece("SIERRA GONZALES", doc), "sin ortografia distinta"

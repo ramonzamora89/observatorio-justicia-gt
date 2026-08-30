@@ -71,10 +71,34 @@ Los casos abiertos —qué efecto tiene un amparo denegado en única instancia, 
 dictamen en opinión consultiva— **requieren criterio jurídico guatemalteco, no de
 ingeniería.** Cobertura actual: 13 de 20.
 
-### 14. Un campo del modelo sin evidencia comprobable
-En el expediente 5577-2015, 1 de 3 citas jurisprudenciales no aparece literalmente
-en el documento. Está marcada en el manifest, no borrada. Vale la pena mirarla a
-mano: puede ser una cita que el modelo compuso, o una que el parser partió.
+### 14. ~~Un campo del modelo sin evidencia comprobable~~
+Revisado a mano. No era una cita inventada: el expediente **894-98** (id 795937)
+escribe «expediente setenta y dos**- **noventa y dos» con un espacio después del
+guion —resto de un salto de línea que `pdftotext` conserva— y el modelo lo citó
+sin ese espacio. La cita era fiel; el cotejo era demasiado literal en un punto
+que no debía serlo.
+
+La normalización ahora une los guiones partidos. Es la única licencia que se toma
+la comparación, y es estrecha a propósito: sigue sin aceptar sinónimos,
+reordenamientos ni elisiones, y hay test de las tres cosas. Resultado: **76 de 76
+verificadas**.
+
+### 15. Una inconsistencia interna del propio documento, para revisión humana
+En el expediente **894-98**, la Corte cita: «sentencia […] de fecha **nueve de
+abril de mil novecientos noventa y uno**, en el **expediente setenta y dos-
+noventa y dos**».
+
+Un expediente de 1992 no puede resolverse en 1991. La inconsistencia está **en la
+resolución original**, no en la extracción: puede ser un error de mecanografía del
+tribunal, o el expediente puede ser 72-91.
+
+**No se corrige.** Se registra tal como consta, porque "arreglar" en silencio la
+cita de un tribunal es fabricar evidencia. Al construir el grafo de precedentes,
+este vínculo debe quedar sin resolver y marcado, no adivinado hacia el año que
+parezca más plausible.
+
+Verificable en:
+`https://jurisprudencia.cc.gob.gt/Sentencias/795937.894-98.pdf`
 
 ## Deuda menor
 

@@ -53,12 +53,24 @@ class FieldVerification:
     detail: str | None = None
 
 
+#: Un guion con espacios alrededor es casi siempre un salto de linea del PDF:
+#: «expediente setenta y dos-\nnoventa y dos» sale de `pdftotext` como
+#: «setenta y dos- noventa y dos». Quien cita el pasaje escribe «dos-noventa»,
+#: y exigir el espacio marcaba como inventada una cita fiel.
+#:
+#: Es la unica licencia que se toma la comparacion, y es deliberadamente
+#: estrecha: no se aceptan sinonimos, ni reordenamientos, ni elisiones. Solo
+#: se ignora un espacio pegado a un guion.
+_GUION_PARTIDO = re.compile(r"\s*-\s*")
+
+
 def normalizar(texto: str) -> str:
-    """Sin marcas de pagina, sin tildes, con los espacios colapsados."""
+    """Sin marcas de pagina, sin tildes, espacios colapsados y guiones unidos."""
     sin_marcas = _MARCA_PAGINA.sub(" ", texto)
     descompuesto = unicodedata.normalize("NFD", sin_marcas)
     sin_tildes = "".join(c for c in descompuesto if unicodedata.category(c) != "Mn")
-    return re.sub(r"\s+", " ", sin_tildes).lower().strip()
+    espacios = re.sub(r"\s+", " ", sin_tildes).lower().strip()
+    return _GUION_PARTIDO.sub("-", espacios)
 
 
 def aparece(fragmento: str | None, documento_normalizado: str) -> bool:
