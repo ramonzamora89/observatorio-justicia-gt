@@ -100,6 +100,31 @@ parezca más plausible.
 Verificable en:
 `https://jurisprudencia.cc.gob.gt/Sentencias/795937.894-98.pdf`
 
+### 16. El «Sentido de la sentencia» del portal NO es la confirmación/revocación
+**Comprobado el 30-08-2026 contra 70 documentos.** El campo que publica la CC se
+refiere al **amparo**, no a la **apelación**. Un expediente puede decir
+«Con Lugar -Derecho de defensa» y su fallo resolver «I) Confirma la sentencia
+apelada»: la protección constitucional se concedió, pero la decisión recurrida
+quedó en pie.
+
+Contraste medido sobre los casos cuyo punto resolutivo se pudo leer:
+
+| Sentido del portal | Altera lo recurrido | No lo altera |
+|---|---|---|
+| Con Lugar (n=26) | 16 (62%) | 10 (38%) |
+| Sin Lugar (n=18) | 2 (11%) | 16 (89%) |
+
+Está correlacionado, pero **usarlo como sustituto de la matriz de
+confirmación/revocación misclasificaría cerca de un tercio de los «Con Lugar»**.
+
+Consecuencia para el análisis: las tasas calculadas sobre este campo miden
+«proporción registrada como Con Lugar», no «proporción en que la CC alteró la
+decisión recurrida». Son variables distintas y no deben nombrarse igual.
+
+Para obtener la matriz real hay que leer el punto resolutivo del documento. Una
+regex cruda sobre «resuelve: I)» clasificó 45 de 70 (64%); el resto necesita
+lectura. Es trabajo de la capa 3.
+
 ## Deuda menor
 
 ### 9. `.gitignore` menciona `data/pdf/`, que no se usa
