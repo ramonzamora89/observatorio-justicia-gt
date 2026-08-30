@@ -155,35 +155,42 @@ Lo que si se sostiene: 2020-2023 (51,7%) esta significativamente por encima de
 2011-2015 y 2016-2019 (p<0,001), **pero no de 2003-2010** (p=0,06). El nivel
 actual no es inedito.
 
-### 18. Corrección: el voto razonado NO explica la cola creciente, y no aumenta
-Este repositorio afirmó —en un commit y en una revisión externa que lo repitió—
-que los fallos con voto razonado traen texto después del punto resolutivo y que
-**son más frecuentes en años recientes**. La observación era correcta; **la
-explicación era falsa**.
+### 18. RETRACTADO: la serie de voto razonado medía una práctica de documentación
 
-Lo que sigue al resolutivo en documentos recientes es la **firma electrónica**
-(«Firmado digitalmente por X, Fecha…, Razón: Aprobado»), encabezados de página
-repetidos y bloques de firmas más largos. La firma digital es reciente: eso
-explica la cola creciente.
+Dos correcciones sobre lo mismo, en el mismo día. Se dejan las dos escritas.
 
-Medido sobre 1.992 apelaciones, el voto razonado propio **baja**, no sube:
+**Primera.** Este repositorio afirmó —y una revisión externa lo repitió— que los
+fallos con voto razonado traen texto después del resolutivo y **son más
+frecuentes en años recientes**. La observación era correcta; la explicación era
+falsa. Lo que sigue al resolutivo en documentos recientes es la **firma
+electrónica** («Firmado digitalmente por X, Razón: Aprobado»), encabezados
+repetidos y bloques de firmas más largos.
 
-| Período | Con voto propio | Tasa | IC 95% |
-|---|---|---|---|
-| 2003-2010 | 15/497 | 3.0% | [1.8%, 4.9%] |
-| 2011-2015 | 4/498 | 0.8% | [0.3%, 2.0%] |
-| 2016-2019 | 2/498 | 0.4% | [0.1%, 1.5%] |
-| 2020-2023 | 0/499 | 0.0% | [0.0%, 0.8%] |
+**Segunda, y es la que retracta el hallazgo.** Se construyó una serie de
+«proporción de fallos con voto razonado por año», que bajaba de 3,0% (2003-2010)
+a 0,0% (2020-2023). **Una revisión manual externa encontró el error**: de los 21
+documentos marcados, **solo 2 traen el texto del voto**. Los otros 19 llevan una
+anotación junto al nombre del magistrado —«MAGISTRADO (Voto Disidente
+Razonado)»— y nada más.
 
-Y hubo que distinguir el voto **propio** del mencionado: 21 documentos traen voto
-de la CC y 16 solo narran el voto disidente de la sala apelada. Contarlos juntos
-inflaba la cifra un 76%. Se separan por posición: el propio va después del
-resolutivo, junto a las firmas.
+Y la anotación desaparece después de 2010. Pero **el formato del documento
+también cambió**: los paréntesis en el bloque de firmas pasaron de 45 a 232
+documentos entre 2003-2010 y 2020-2023, solo que ahora anotan montos de multa
+(«Q2,000.00»), no votos.
 
-**Alcance:** medido solo sobre `Apelación de Sentencia de Amparo`. En
-inconstitucionalidades, más disputadas, la frecuencia puede ser muy distinta. Y
-solo 18 documentos de 66.025 publican el voto en archivo aparte, así que no hay
-una población oculta que explique el cero de 2020-2023.
+**Conclusión: la serie mide cómo la Corte anota sus sentencias, no cuánto
+disiente.** No se puede distinguir desde aquí «dejó de haber disidencias» de
+«dejó de anotarse». No debe publicarse como indicador de cohesión.
+
+**Qué haría falta** para medirlo de verdad: comparar contra las gacetas
+jurisprudenciales, que publican los votos razonados como pieza aparte, o pedir a
+la CC la serie de votos por magistrado. Ninguna de las dos sale de este corpus.
+
+**El patrón que van tres veces en esta sesión:** una serie temporal que parecía
+conducta de la Corte y resultó ser cómo la fuente registra las cosas. Pasó con la
+etiqueta «Sentido de la sentencia», con la cola creciente del resolutivo y ahora
+con el voto. **Antes de publicar cualquier serie temporal de este corpus hay que
+preguntar qué más cambió en el documento durante ese período.**
 
 ## Deuda menor
 

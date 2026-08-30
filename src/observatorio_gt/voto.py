@@ -1,7 +1,18 @@
-"""Voto razonado o disidente: si lo hay, y de quien.
+"""Anotacion de voto disidente en el bloque de firmas.
 
-Un indicador de cohesion de la Corte que no cuesta ninguna peticion nueva: sale
-de los documentos que ya estan en cache.
+**RETRACTADO COMO INDICADOR DE COHESION.** Ver KNOWN_ISSUES §18. Lo que este
+modulo detecta es una **practica de documentacion**, no la existencia de
+disidencia, y no sirve para afirmar que la Corte disiente mas o menos.
+
+Lo que detecta, exactamente: que junto al nombre de un magistrado, despues del
+punto resolutivo, aparezca «Voto Disidente», «(Voto Disidente Razonado)» o
+similar. Revisado a mano por un tercero: de 21 documentos marcados, **solo 2
+traen el texto del voto**; los otros 19 solo llevan la anotacion.
+
+Y la anotacion aparece casi solo entre 2003 y 2010. Despues no. Pero los
+parentesis en el bloque de firmas **no** desaparecieron -- pasaron de 45 a 232
+documentos-- - solo que ahora dicen montos de multa. **Cambio el formato del
+documento, y no se puede saber desde aqui si cambio la conducta.**
 
 **Dos trampas, y las dos son de la misma familia que el falso positivo de
 «antejuicio»:**
