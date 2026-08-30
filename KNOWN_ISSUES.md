@@ -182,9 +182,15 @@ documentos entre 2003-2010 y 2020-2023, solo que ahora anotan montos de multa
 disiente.** No se puede distinguir desde aquí «dejó de haber disidencias» de
 «dejó de anotarse». No debe publicarse como indicador de cohesión.
 
-**Qué haría falta** para medirlo de verdad: comparar contra las gacetas
-jurisprudenciales, que publican los votos razonados como pieza aparte, o pedir a
-la CC la serie de votos por magistrado. Ninguna de las dos sale de este corpus.
+**Qué haría falta** para medirlo de verdad. Se propuso la Gaceta Jurisprudencial
+y **se comprobó el 30-08-2026 que no sirve**: la gaceta es una compilación de
+fichas por expediente —expediente, fecha, sentido, resumen del acto reclamado—
+sin bloque de firmas ni votos. En 345 páginas de la gaceta 155, «amparo» aparece
+982 veces y «disidente» y «razonado» **cero**, con el texto extraído limpio
+(1,08 millones de caracteres, veredicto `usable`). Ver `sources/cc/FICHA_GACETA.md`.
+
+Queda como única vía conocida pedirle a la CC la serie de votos por magistrado.
+Si los votos razonados se publican en algún lado, no es en la gaceta.
 
 **El patrón que van tres veces en esta sesión:** una serie temporal que parecía
 conducta de la Corte y resultó ser cómo la fuente registra las cosas. Pasó con la
