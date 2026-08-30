@@ -69,7 +69,21 @@ residuo; se deja el renglón porque no estorba.
 Una fixture PDF de test quedaría ignorada en silencio. Por eso los tests de PDF
 usan bytes sintéticos en memoria, no archivos.
 
-### 11. No hay verificación automática de plausibilidad léxica del texto extraído
-El paso 6 del spike (leer una frase como prosa) se hizo a mano sobre 2 de 20
-documentos. Corresponde al milestone de parsing convertirlo en comprobación por
-documento.
+### 11. ~~No hay verificación automática de plausibilidad léxica~~
+Resuelto: `parsers/quality.py` la hace por documento. Dos límites **medidos**,
+no supuestos:
+
+- una capa de texto que se comiera solo las **w** es indetectable por
+  frecuencia (el español la usa un 0.01%);
+- la fragmentación tipo escáner se detecta desde **~8% de palabras afectadas**;
+  por debajo pasa. El corpus real está en 0.6–2.1%, así que hay cuatro veces de
+  margen, pero el piso existe.
+
+### 12. La prueba de OCR se hizo sobre un caso fabricado, no encontrado
+Ninguno de los 20 documentos necesita OCR: todos tienen capa nativa de Word. Para
+probar la red de seguridad se rasterizó uno bueno y se midió el OCR contra el
+texto del original: 99.8% de palabras recuperadas.
+
+Eso valida el mecanismo, **no predice el rendimiento sobre escaneos reales de
+tribunal**, que traen inclinación, manchas, sellos y fotocopias de fotocopias.
+La primera vez que aparezca un escaneo de verdad hay que volver a medir.

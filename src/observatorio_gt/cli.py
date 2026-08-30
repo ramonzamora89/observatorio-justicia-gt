@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import uuid
+from collections import Counter
 from pathlib import Path
 
 import structlog
@@ -17,12 +19,15 @@ from observatorio_gt.manifest import read_records, sha256_bytes, write_records
 from observatorio_gt.net.cache import DiskCache
 from observatorio_gt.net.checks import EXPECT_API, FetchOutcome
 from observatorio_gt.net.client import HttpPolicy, PoliteClient
+from observatorio_gt.parsers import pipeline
 
 app = typer.Typer(add_completion=False, help="Observatorio de Resoluciones Judiciales de Guatemala")
 cc_app = typer.Typer(help="Portal de Jurisprudencia de la Corte de Constitucionalidad")
 manifest_app = typer.Typer(help="Utilidades de manifest")
 app.add_typer(cc_app, name="cc-ptmp")
+parse_app = typer.Typer(help="Conversion de documentos a texto")
 app.add_typer(manifest_app, name="manifest")
+app.add_typer(parse_app, name="parse")
 
 DEFAULT_CONFIG = Path("config/sources/cc_ptmp.toml")
 log = structlog.get_logger("cli")
@@ -194,6 +199,93 @@ def check_ids(
         typer.echo(f"informe       : {report}")
     if counts["discrepa"]:
         raise typer.Exit(code=1)
+
+
+@parse_app.command("run")
+def parse_run(
+    manifest: Path = typer.Option(
+        Path("data/manifests/cc_ptmp/discovery_manifest.jsonl"), help="Manifest de discovery"
+    ),
+    out_dir: Path = typer.Option(Path("data/parsed/cc_ptmp"), help="Destino del texto"),
+    ocr_dir: Path = typer.Option(Path("data/processed/ocr"), help="Destino de los PDF re-OCR"),
+    report: Path = typer.Option(
+        Path("data/manifests/cc_ptmp/parse_manifest.jsonl"), help="Manifest de parsing"
+    ),
+    limit: int | None = typer.Option(None),
+    no_ocr: bool = typer.Option(False, "--no-ocr", help="No hacer OCR; marcar para revision"),
+    pretty: bool = typer.Option(True),
+) -> None:
+    """Convierte a texto los documentos del manifest, con OCR de respaldo."""
+    configure(pretty=pretty)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    report.parent.mkdir(parents=True, exist_ok=True)
+
+    rutas: Counter[str] = Counter()
+    lineas: list[str] = []
+    revisar: list[str] = []
+
+    for record in list(read_records(manifest))[:limit]:
+        doc = record.document
+        if doc is None or doc.local_path is None or not Path(doc.local_path).exists():
+            rutas[pipeline.ParseRoute.NO_COMPROBADO.value] += 1
+            revisar.append(f"{record.source_document_id}: sin documento local")
+            continue
+
+        pdf = Path(doc.local_path)
+        result = pipeline.parse_document(pdf, ocr_dir=ocr_dir, permitir_ocr=not no_ocr)
+        rutas[result.route.value] += 1
+
+        text_path: str | None = None
+        if result.text:
+            destino = out_dir / f"{pdf.stem}.txt"
+            destino.write_text(result.text, encoding="utf-8")
+            text_path = str(destino)
+
+        q = result.quality
+        lineas.append(
+            json.dumps(
+                {
+                    "record_id": record.record_id,
+                    "source_document_id": record.source_document_id,
+                    "expedientes": record.metadata.expedientes,
+                    "sha256": doc.sha256,
+                    "source_path": str(pdf),
+                    "text_path": text_path,
+                    "parser_version": result.parser_version,
+                    "route": result.route.value,
+                    "pages": result.pages,
+                    "pdf_producer": result.pdf_profile.producer if result.pdf_profile else None,
+                    "producido_por_escaner": (
+                        result.pdf_profile.producido_por_escaner if result.pdf_profile else None
+                    ),
+                    "quality": None if q is None else {
+                        "verdict": q.verdict.value,
+                        "caracteres": q.caracteres,
+                        "palabras": q.palabras,
+                        "ratio_funcionales": round(q.ratio_funcionales, 4),
+                        "ratio_fragmentacion": round(q.ratio_fragmentacion, 4),
+                        "letras_desaparecidas": list(q.letras_desaparecidas),
+                        "razones": list(q.razones),
+                    },
+                    "note": result.note,
+                },
+                ensure_ascii=False,
+            )
+        )
+        if not result.usable:
+            revisar.append(f"{record.source_document_id}: {result.route} -- {result.note or ''}")
+
+    report.write_text("\n".join(lineas) + ("\n" if lineas else ""), encoding="utf-8")
+
+    typer.echo("")
+    for ruta, n in rutas.most_common():
+        typer.echo(f"  {ruta:<20} {n}")
+    typer.echo(f"\ntexto      : {out_dir}")
+    typer.echo(f"manifest   : {report}")
+    if revisar:
+        typer.echo(f"\nPARA REVISION HUMANA ({len(revisar)}):", err=True)
+        for r in revisar:
+            typer.echo(f"  ! {r}", err=True)
 
 
 @manifest_app.command("verify")

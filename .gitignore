@@ -2,6 +2,8 @@
 data/raw/
 data/pdf/
 data/cache/
+data/parsed/
+data/processed/
 
 # ...pero los manifests y los hashes SÍ: son el registro auditable
 !data/manifests/

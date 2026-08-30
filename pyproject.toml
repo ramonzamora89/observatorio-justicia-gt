@@ -17,7 +17,12 @@ dependencies = [
 obsgt = "observatorio_gt.cli:app"
 
 [dependency-groups]
-dev = ["pytest>=8.2", "ruff>=0.5", "mypy>=1.10"]
+dev = [
+    "pytest>=8.2",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "pillow>=12.3.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -28,8 +33,11 @@ packages = ["src/observatorio_gt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-m 'not network' -q"
-markers = ["network: toca la red de verdad; deseleccionado por defecto"]
+addopts = "-m 'not network and not ocr' -q"
+markers = [
+    "network: toca la red de verdad; deseleccionado por defecto",
+    "ocr: ejecuta OCR real; lento y necesita ocrmypdf/tesseract-spa",
+]
 
 [tool.ruff]
 line-length = 100
