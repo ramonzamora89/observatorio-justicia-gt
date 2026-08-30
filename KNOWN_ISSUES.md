@@ -155,6 +155,36 @@ Lo que si se sostiene: 2020-2023 (51,7%) esta significativamente por encima de
 2011-2015 y 2016-2019 (p<0,001), **pero no de 2003-2010** (p=0,06). El nivel
 actual no es inedito.
 
+### 18. Corrección: el voto razonado NO explica la cola creciente, y no aumenta
+Este repositorio afirmó —en un commit y en una revisión externa que lo repitió—
+que los fallos con voto razonado traen texto después del punto resolutivo y que
+**son más frecuentes en años recientes**. La observación era correcta; **la
+explicación era falsa**.
+
+Lo que sigue al resolutivo en documentos recientes es la **firma electrónica**
+(«Firmado digitalmente por X, Fecha…, Razón: Aprobado»), encabezados de página
+repetidos y bloques de firmas más largos. La firma digital es reciente: eso
+explica la cola creciente.
+
+Medido sobre 1.992 apelaciones, el voto razonado propio **baja**, no sube:
+
+| Período | Con voto propio | Tasa | IC 95% |
+|---|---|---|---|
+| 2003-2010 | 15/497 | 3.0% | [1.8%, 4.9%] |
+| 2011-2015 | 4/498 | 0.8% | [0.3%, 2.0%] |
+| 2016-2019 | 2/498 | 0.4% | [0.1%, 1.5%] |
+| 2020-2023 | 0/499 | 0.0% | [0.0%, 0.8%] |
+
+Y hubo que distinguir el voto **propio** del mencionado: 21 documentos traen voto
+de la CC y 16 solo narran el voto disidente de la sala apelada. Contarlos juntos
+inflaba la cifra un 76%. Se separan por posición: el propio va después del
+resolutivo, junto a las firmas.
+
+**Alcance:** medido solo sobre `Apelación de Sentencia de Amparo`. En
+inconstitucionalidades, más disputadas, la frecuencia puede ser muy distinta. Y
+solo 18 documentos de 66.025 publican el voto en archivo aparte, así que no hay
+una población oculta que explique el cero de 2020-2023.
+
 ## Deuda menor
 
 ### 9. `.gitignore` menciona `data/pdf/`, que no se usa
