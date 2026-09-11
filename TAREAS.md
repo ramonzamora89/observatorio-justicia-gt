@@ -226,14 +226,38 @@ desmienta** lo que esa investigación espera encontrar.
 
 ---
 
-## 7. Probar CIDEJ · única vía viva para primera instancia
+## 7. ~~Probar CIDEJ~~ · **solicitud redactada el 11-09-2026, falta enviarla**
 
-Sin cambios. El Centro de Información, Desarrollo y Estadística Judicial aparece
-como operador de SICEJ y **no es CENADOJ**. Nunca se ha probado como
-destinatario, y es la única puerta que queda para las fases 3 y 4 después de que
-el portal del OJ resultara cerrado sin credencial de abogado y notario.
+Ver `sources/oj/FICHA_CIDEJ.md` y `sources/oj/solicitud_uip_oj_2026-09-11.md`.
 
-Trabajo de gestión, no de código.
+**El destinatario no era CIDEJ.** Escribirle a la dependencia que uno cree
+competente es lo que produjo el peloteo de agosto. La solicitud va a la **Unidad
+de Información Pública del OJ**, y nombra a CIDEJ dentro para que la remisión
+interna sea trivial.
+
+**Y corrige una regla heredada de `CLAUDE.md`:** decía que «el Organismo Judicial
+no tiene ventanilla que reciba una solicitud de información». El OJ **sí tiene**
+Unidad de Información Pública, con formulario en `web.oj.gob.gt/formularioip/`.
+Lo que es cierto es otra cosa: que las dependencias se remiten unas a otras. Y
+contra eso la ley tiene una norma que no se estaba invocando —**artículo 38 del
+Decreto 57-2008**: quien recibe «no podrá alegar incompetencia (…) debiendo
+obligadamente (…) remitirla inmediatamente a quien corresponda»—.
+
+El artículo que manda sobre la redacción es el **45**: la información se entrega
+«en el estado en que se encuentre» y la obligación «no comprenderá el
+procesamiento». **Pedir una tasa o un cruce es pedir procesamiento y se rechaza
+con la ley en la mano.** Por eso el pedido 1 no pide datos: pide el **catálogo de
+qué datos existen**, que es barato de responder y convierte la segunda solicitud
+en específica.
+
+**Lo que falta, y es de Moncho:** rellenar los corchetes y enviarla. El
+formulario da **403 a cliente automatizado** y no se forzó —queda *no
+comprobado*, no cerrado—; es un trámite de navegador. **Guardar el acuse: sin
+acuse no corre plazo, y es lo que faltó en agosto.**
+
+Plazos que empiezan a correr: **10 días** (art. 42), prórroga avisada 2 días
+antes (art. 43), **afirmativa ficta** (art. 44), recurso a los **15 días**
+(art. 54).
 
 ---
 
