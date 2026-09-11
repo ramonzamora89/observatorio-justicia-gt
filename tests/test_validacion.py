@@ -94,3 +94,24 @@ def test_la_ficha_real_no_tiene_veredicto_de_maquina_obsoleto():
             if f["id"] in efecto and efecto[f["id"]] != f["veredicto_maquina"]
         ]
     assert not obsoletas, f"veredicto_maquina obsoleto en las filas {obsoletas}"
+
+
+def test_el_hook_no_propone_tareas_ya_cerradas():
+    """Una tarea cerrada lleva el titulo tachado en TAREAS.md.
+
+    Si el hook la emite igual, la sesion abre proponiendo trabajo hecho: es la
+    misma desincronizacion entre lista y repositorio que ya produjo la cifra
+    obsoleta del 44,8% y la tarea 9 retractada.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    raiz = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location(
+        "tareas_prioritarias", raiz / "scripts" / "tareas_prioritarias.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    for titulo in mod.tareas(limite=10):
+        assert "~~" not in titulo, f"el hook propone una tarea cerrada: {titulo}"

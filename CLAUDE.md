@@ -180,13 +180,26 @@ plausibles, no solo los raros.
 
 Trabajo de campo sobre el Organismo Judicial, agosto de 2026:
 
-- **el Organismo Judicial no tiene ventanilla que reciba una solicitud de
-  información**: varias dependencias responden que no les toca y remiten a otra,
-  y sin acuse no corre plazo;
+- **el Organismo Judicial sí tiene ventanilla**, y creer lo contrario costó
+  semanas. *Corregido el 11-09-2026; el trabajo de campo de agosto lo dio por
+  inexistente.* Hay Unidad de Información Pública, con formulario en
+  `web.oj.gob.gt/formularioip/`. Lo cierto es otra cosa: **las dependencias se
+  remiten unas a otras, y sin acuse no corre plazo**. Contra eso está el
+  **artículo 38 del Decreto 57-2008** —quien recibe «no podrá alegar
+  incompetencia (…) debiendo obligadamente (…) remitirla inmediatamente a quien
+  corresponda»—, que no se estaba invocando. Y el **artículo 45** manda sobre
+  cómo se pide: la información se entrega «en el estado en que se encuentre» y la
+  obligación «no comprenderá el procesamiento», así que **pedir una tasa o un
+  cruce es pedir procesamiento y se rechaza con la ley en la mano**. Se pide lo
+  que ya existe; el procesamiento lo hace este proyecto. Ver
+  `sources/oj/FICHA_CIDEJ.md`;
 - sus **boletines estadísticos desagregados dejaron de publicarse en 2011**;
 - **SICEJ**, el consultor de expedientes, **sólo lo pueden usar las partes** de
   cada caso;
-- **CIDEJ** aparece como operador del sistema y **no es CENADOJ**: es un
-  destinatario que todavía no se ha probado.
+- **CIDEJ** aparece como operador del sistema y **no es CENADOJ**. Pero no es el
+  destinatario: es el poseedor probable. **Se le escribe a la Unidad de
+  Información Pública nombrando a CIDEJ dentro**, que es lo que evita el peloteo.
+  Sus atribuciones formales siguen **sin verificar**: su manual de procedimientos
+  da 403 en las dos URL oficiales.
 
 Las fases 2 a 4 de este proyecto dependen de ahí. Conviene empezar sabiéndolo.

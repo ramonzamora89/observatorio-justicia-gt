@@ -30,6 +30,11 @@ def tareas(limite: int = 4) -> list[str]:
         titulo = re.sub(r"^\d+\.\s*", "", bloque.splitlines()[0].strip())
         if titulo.lower().startswith("cosas que no"):
             continue
+        # Una tarea cerrada lleva el titulo tachado. Emitirla igual haria que la
+        # sesion abriera proponiendo trabajo ya hecho, que es como la lista se
+        # desincroniza del repositorio.
+        if "~~" in titulo or titulo.lower().startswith("cerrado"):
+            continue
         cuerpo = " ".join(
             linea.strip()
             for linea in bloque.splitlines()[1:]
@@ -45,23 +50,25 @@ def validacion() -> str | None:
     ficha = RAIZ / "data/manifests/cc_ptmp/validacion_resolutivo.csv"
     if not ficha.exists():
         return None
-    # La hoja vuelve editada desde Excel o Numbers, que la guardan en cp1252.
-    crudo = ficha.read_bytes()
-    texto = None
-    for cod in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
-        try:
-            texto = crudo.decode(cod)
-            break
-        except UnicodeDecodeError:
-            continue
-    if texto is None:
-        return None
+    # La hoja vuelve editada desde Numbers o Excel, que ensucian la codificacion.
+    # Se reutiliza el lector del modulo en vez de repetir aqui el tanteo por
+    # excepcion, que elegia cp1252 siempre y corrompia en silencio.
+    sys.path.insert(0, str(RAIZ / "src"))
+    from observatorio_gt import validacion as v
+
     import io
 
-    filas = list(csv.DictReader(io.StringIO(texto)))
-    hechas = sum(1 for f in filas if (f.get("VEREDICTO_HUMAN0") or
-                                      f.get("VEREDICTO_HUMANO_altera_mantiene_otro") or "").strip())
-    return f"Validacion del clasificador: {hechas} de {len(filas)} filas revisadas."
+    filas = list(csv.DictReader(io.StringIO(v.leer_texto(ficha))))
+    hechas = sum(1 for f in filas if v.veredicto_humano(f) is not None)
+    sin_token = sum(
+        1 for f in filas
+        if (f.get(v.COLUMNA_PROSA) or "").strip()
+        and not (f.get(v.COLUMNA_CONTROLADA) or "").strip()
+    )
+    linea = f"Validacion del clasificador: {hechas} de {len(filas)} filas revisadas."
+    if sin_token:
+        linea += f" {sin_token} con prosa pero sin token controlado."
+    return linea
 
 
 def main() -> None:
