@@ -450,9 +450,21 @@ def cc_validar(
     typer.echo(f"exactitud global ponderada: {global_p:.1%}   IC 95% [{lo:.1%}, {hi:.1%}]")
     if pendientes:
         typer.echo(f"\nfilas sin revisar: {pendientes}", err=True)
+    # El veredicto se dicta sobre el intervalo, no sobre el punto. Un 100% sobre
+    # doce revisiones tiene el limite inferior en 75,7%: es compatible con un
+    # clasificador del 80% y no distingue nada. Decir «CUMPLE» ahi es exactamente
+    # el error que este proyecto persigue -un numero plausible que nadie audita.
+    revisados = sum(r.revisados for r in resultados)
+    if lo > 0.95:
+        veredicto = "CUMPLE"
+    elif hi < 0.95:
+        veredicto = "NO CUMPLE"
+    else:
+        veredicto = (
+            f"SIN EVIDENCIA SUFICIENTE (n={revisados}; el intervalo abarca el umbral)"
+        )
     typer.echo(
-        f"\nCriterio de PRD-1 §16 para el resultado principal: >95%. "
-        f"{'CUMPLE' if global_p > 0.95 else 'NO CUMPLE'}"
+        f"\nCriterio de PRD-1 §16 para el resultado principal: >95%. {veredicto}"
     )
 
 

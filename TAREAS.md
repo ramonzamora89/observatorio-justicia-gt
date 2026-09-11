@@ -1,6 +1,6 @@
 # Tareas pendientes
 
-Actualizado: **2026-09-02**. En orden de prioridad.
+Actualizado: **2026-09-11**. En orden de prioridad.
 
 *Revisión hecha midiendo el estado del repositorio, no releyendo la lista
 anterior. Las cifras de la versión del 30 de agosto habían quedado obsoletas por
@@ -26,23 +26,25 @@ Doce filas. Quedan ochenta y ocho.
 uv run obsgt cc-ptmp validar --puntuar
 ```
 
-**Lo medido hasta hoy:** de las 12, diez dan veredicto comparable y **las diez
-concuerdan** con la máquina. Las otras dos son las que destaparon el problema del
-accesorio.
+**Lo medido hasta hoy:** las 12 dan veredicto comparable y **las doce
+concuerdan** con el clasificador vigente. Decía «diez de diez» porque 17 filas
+puntuaban contra la versión anterior del clasificador; ver tarea 4.
 
-Y hay que decir lo que ese número **no** es: un 100% sobre diez **no distingue un
-clasificador del 97% de uno del 80%**, y `PRD-1.md` §16 exige más del 95%. Con 30
-o 40 sí se distingue.
+Y hay que decir lo que ese número **no** es: un 100% sobre doce tiene el límite
+inferior del IC en **75,7%**, o sea que **no distingue un clasificador del 97% de
+uno del 80%**, y `PRD-1.md` §16 exige más del 95%. Con 30 o 40 sí se distingue.
+El comando ya lo dice solo: responde `SIN EVIDENCIA SUFICIENTE`, no `CUMPLE`.
 
 **Dos cautelas para las que faltan:**
 
-- **Sesgo de orden.** Las 12 validadas son las 12 primeras del archivo. Si el CSV
-  está ordenado por algo que se correlacione con la dificultad —año, estrato,
-  regla que disparó—, ese 10/10 no describe la dificultad media. Validar en
-  orden aleatorio, o comprobar que el archivo ya lo esté.
-- **Lo valioso no es el acuerdo, es el desacuerdo.** Las diez que coincidieron no
-  enseñaron nada; las dos que no, corrigieron el 22% del resultado principal.
-  Cuando una fila cueste decidirla, esa es la fila que hay que anotar con calma.
+- ~~**Sesgo de orden.**~~ **Comprobado el 11-09-2026: el archivo ya está
+  aleatorizado** —año medio 2015,1 en las 12 revisadas contra 2015,0 en las 88
+  restantes, y estratos en proporción—. Se puede seguir en orden.
+- **Lo valioso no es el acuerdo, es el desacuerdo.** Diez filas coincidieron y no
+  enseñaron nada; las dos que costaron decidirse corrigieron el 22% del resultado
+  principal. Que hoy las doce concuerden no cambia eso: concuerdan **porque** esas
+  dos se leyeron despacio y movieron el criterio. Cuando una fila cueste
+  decidirla, esa es la fila que hay que anotar con calma.
 
 ---
 
@@ -100,27 +102,59 @@ conviene decirlo así en vez de esperar a la decisión para publicar nada.
 
 ---
 
-## 4. Devolver el CSV de validación a UTF-8 · **antes de seguir con la tarea 1**
+## 4. ~~Devolver el CSV de validación a UTF-8~~ · **hecho el 11-09-2026**
 
-Conocido desde el 30 de agosto y aún sin arreglar. El archivo vuelve de la hoja
-de cálculo en **cp1252**, y las tildes están rotas dentro de las respuestas ya
-escritas:
+Hecho, pero **el diagnóstico que traía esta lista era falso y su receta habría
+roto el archivo**. Queda escrito porque el error es reutilizable.
 
-```
-«modificaci—n»  por  «modificación»
-«funci—n»       por  «función»
-```
+Decía que el archivo volvía «en cp1252» y que había que convertirlo entero.
+Medido: el archivo era **UTF-8 válido salvo tres bytes**, los tres MacRoman
+—`ó`, `á`, `ó`— tecleados por el revisor. Convertirlo entero a cp1252 habría
+arreglado esos tres y **roto los 57 guiones** que ya estaban bien.
 
-`csv.DictReader` revienta con `UnicodeDecodeError` en la posición 2437.
+De dónde salió el diagnóstico: `leer_texto()` tanteaba codificaciones por
+excepción, y **cp1252 no falla casi nunca**, así que ganaba siempre. Leer el
+archivo con ella devolvía «modificaci—n», y ese síntoma —producido por el propio
+lector— se anotó como si fuera el estado del archivo.
 
-**Qué hacer:** convertir a UTF-8, reparar las tildes de las 12 respuestas
-existentes y dejar dicho en `COMO_VALIDAR_EL_RESOLUTIVO.md` que se guarde como
-**CSV UTF-8**, no como CSV a secas.
+Lo hecho:
 
-Conviene además **añadir una columna de vocabulario controlado**
-(`altera` / `mantiene` / `no_aplica`) al lado de la nota en prosa. La prosa se
-conserva: fue leyéndola como se vio el problema del accesorio, y un desplegable
-no lo habría dejado ver.
+- los tres bytes parcheados; la ficha es UTF-8 estricto y los 57 guiones siguen;
+- `leer_texto()` repara **byte a byte**: lo válido en UTF-8 se respeta y sólo lo
+  que falla se traduce, eligiendo codificación **por el resultado** —gana la que
+  produce una letra castellana— y no por orden de la lista;
+- columna `VEREDICTO_CONTROLADO_altera_mantiene_no_aplica` junto a la prosa; el
+  token manda, la prosa es el respaldo y se conserva;
+- `COMO_VALIDAR_EL_RESOLUTIVO.md` reescrito, con el «CSV UTF-8» primero;
+- 7 tests nuevos; la suite pasa entera.
+
+### Y de paso: 17 filas puntuaban contra un clasificador que ya no existe
+
+Hallazgo no previsto, y el que más importaba. La ficha se escribió el 30 de
+agosto a las **16:18**; `apelaciones.jsonl` se regeneró a las **16:26**, ya con
+el criterio del accesorio. **17 de las 100 filas** se quedaron con el
+`veredicto_maquina` viejo, las 17 en la misma dirección `altera → mantiene`.
+
+Consecuencia: `validar --puntuar` daba **88,9%** y dos fallos en el estrato de la
+regla discutida. Los dos «fallos» eran filas donde el clasificador de hoy
+**coincide** con el revisor. Refrescada la columna contra la fuente, es
+**12 de 12**. El valor viejo se conserva en `veredicto_maquina_previo_2026-08-30`
+y hay un test que falla si la ficha vuelve a quedarse atrás.
+
+Esto también corrige lo que decía esta lista: no era «diez comparables que
+concuerdan y dos que no dan veredicto». Son **doce comparables y doce
+concuerdan**.
+
+### Y el comando decía CUMPLE cuando no puede saberlo
+
+Con el 100% recién salido, `validar --puntuar` respondía que se cumple el >95%
+de `PRD-1.md` §16. Lo dictaba sobre el punto, ignorando que el **IC 95% baja a
+75,7%** con n=12: compatible con un clasificador del 80%. Ahora el veredicto se
+dicta sobre el intervalo y responde `SIN EVIDENCIA SUFICIENTE` hasta que el
+intervalo entero pase el umbral.
+
+**Siguiente:** las filas 7 y 10 esperan token —son las del accesorio, tienen
+prosa y no veredicto— y quedan 88 por revisar.
 
 ---
 
@@ -277,6 +311,19 @@ un documento que hay que abrir, no una identificación.
   reposición penal (33). Es la regla del nombre de órgano con otra cara: allí la
   trampa estaba en el campo equivocado, aquí en el **valor incompleto**.
   **Comparar contra el valor completo del campo, siempre.**
+- **Tantear codificaciones por excepción.** *Añadido el 11-09-2026.* `cp1252` y
+  `latin-1` decodifican casi cualquier byte **sin lanzar error**, así que un bucle
+  `for cod in (...): try: decode` devuelve siempre la primera de la lista y la
+  corrupción no se nota. Así se diagnosticó como cp1252 una ficha que era UTF-8
+  con tres bytes MacRoman. **Elegir la codificación por el resultado** —en
+  castellano, la que produce vocales acentuadas— y reparar sólo los bytes que
+  fallan, nunca el archivo entero.
+- **Puntuar contra una columna de veredicto congelada.** *Añadido el 11-09-2026.*
+  La ficha de validación guarda lo que dijo el clasificador **el día que se
+  generó**. Si el clasificador cambia después, la revisión humana se compara
+  contra una versión que ya no existe y los desacuerdos son fantasmas: 17 de 100
+  filas, y un 88,9% donde había un 100%. **Refrescar contra la fuente antes de
+  puntuar**, conservando el valor viejo.
 - **Citar una cifra de `TAREAS.md` sin recomputarla.** *Añadido el 02-09-2026.*
   Esta lista llevaba desde el 30 de agosto diciendo «44,8% contra 28,1%» cuando
   el commit de esa misma tarde la había dejado en **35,1% contra 28,1%**. Una

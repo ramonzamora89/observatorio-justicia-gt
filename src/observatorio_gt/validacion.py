@@ -31,21 +31,71 @@ from typing import Any
 REGLA_DISCUTIDA = "confirma con modificacion"
 
 
-def leer_texto(path: Path) -> str:
-    """Lee el archivo aunque la hoja de calculo lo haya guardado en otra codificacion.
+#: Letras que el castellano usa y el ASCII no. Sirven para elegir codificacion:
+#: la lectura correcta de un texto en castellano produce vocales acentuadas, no
+#: guiones largos sueltos ni dagas.
+_LETRAS_CASTELLANAS = set("\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00fc"
+                          "\u00c1\u00c9\u00cd\u00d3\u00da\u00d1\u00dc"
+                          "\u00bf\u00a1")
 
-    La ficha de validacion sale de aqui en UTF-8, pero vuelve editada desde Excel
-    o Numbers, que la guardan en cp1252 o latin-1. Abrirla como UTF-8 revienta con
-    un byte invalido y se lleva por delante tanto la puntuacion como el hook de
-    inicio de sesion.
+#: Orden de tanteo para los bytes sueltos que no son UTF-8. Numbers y Excel para
+#: Mac guardan en MacRoman, no en cp1252.
+_LEGADAS = ("mac_roman", "cp1252", "latin-1")
+
+
+def _mejor_legada(byte: int) -> str:
+    """Elige con que codificacion antigua leer un byte suelto.
+
+    No se puede tantear por excepcion: cp1252 y latin-1 decodifican casi
+    cualquier byte sin fallar, asi que el primero de la lista gana siempre y
+    corrompe en silencio. Por eso se elige por el resultado: gana la que
+    produce una letra castellana. Fue este mismo tanteo por excepcion el que
+    hizo leer como cp1252 una ficha que era MacRoman, y diagnosticar
+    «modificaci—n» donde el archivo decia «modificacion» con o acentuada.
     """
-    crudo = path.read_bytes()
-    for codificacion in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
+    for codificacion in _LEGADAS:
         try:
-            return crudo.decode(codificacion)
+            ch = bytes([byte]).decode(codificacion)
         except UnicodeDecodeError:
             continue
-    return crudo.decode("utf-8", errors="replace")
+        if ch in _LETRAS_CASTELLANAS:
+            return codificacion
+    return "cp1252"
+
+
+def leer_texto(path: Path) -> str:
+    """Lee la ficha aunque la hoja de calculo haya ensuciado la codificacion.
+
+    La ficha sale de aqui en UTF-8 y vuelve editada desde Excel o Numbers. Lo
+    que vuelve no suele ser «otra codificacion» entera sino una **mezcla**: el
+    grueso del archivo sigue siendo UTF-8 valido y solo los caracteres que el
+    revisor tecleo salen en la codificacion antigua del sistema. Decodificar el
+    archivo entero como cp1252 arregla esos pocos bytes y de paso destroza todo
+    lo que ya estaba bien -en la ficha real habria roto 57 guiones.
+
+    Por eso se repara byte a byte: lo valido en UTF-8 se respeta y solo lo que
+    falla se traduce desde la codificacion antigua que mejor explique el byte.
+    """
+    crudo = path.read_bytes()
+    if crudo.startswith(b"\xef\xbb\xbf"):
+        crudo = crudo[3:]
+    try:
+        return crudo.decode("utf-8")
+    except UnicodeDecodeError:
+        pass
+
+    trozos: list[str] = []
+    i = 0
+    while i < len(crudo):
+        try:
+            trozos.append(crudo[i:].decode("utf-8"))
+            break
+        except UnicodeDecodeError as e:
+            trozos.append(crudo[i : i + e.start].decode("utf-8"))
+            malo = crudo[i + e.start]
+            trozos.append(bytes([malo]).decode(_mejor_legada(malo), errors="replace"))
+            i += e.start + 1
+    return "".join(trozos)
 
 
 #: Estratos y cuanto se revisa de cada uno. El de la regla discutida esta
@@ -121,8 +171,11 @@ def preparar(
         w = csv.writer(fh)
         w.writerow([
             "n", "expediente", "anio", "url_del_documento",
-            "VEREDICTO_HUMANO_altera_mantiene_otro", "NOTA",
+            "VEREDICTO_HUMANO_altera_mantiene_otro",
+            COLUMNA_CONTROLADA,
+            "NOTA",
             "lo_que_leyo_la_maquina", "regla_que_disparo", "veredicto_maquina",
+            "veredicto_maquina_previo_2026-08-30",
             "estrato", "id",
         ])
         for i, f in enumerate(seleccion, start=1):
@@ -132,10 +185,11 @@ def preparar(
                 exps[0] if exps else "",
                 f.get("anio", ""),
                 urls.get(str(f["id"]), ""),
-                "", "",
+                "", "", "",
                 (f.get("punto") or "")[:300],
                 f.get("regla") or "",
                 f.get("efecto") or "",
+                "",
                 f["estrato"],
                 f["id"],
             ])
@@ -172,6 +226,23 @@ def normalizar_veredicto(texto: str) -> str | None:
     return None
 
 
+#: La ficha lleva dos columnas: un token controlado y la nota en prosa. El token
+#: manda cuando esta escrito, porque es lo que el revisor eligio a proposito. La
+#: prosa sigue siendo el respaldo -y se conserva: fue leyendola como se vio el
+#: problema del accesorio, que un desplegable no habria dejado ver.
+COLUMNA_CONTROLADA = "VEREDICTO_CONTROLADO_altera_mantiene_no_aplica"
+COLUMNA_PROSA = "VEREDICTO_HUMANO_altera_mantiene_otro"
+
+
+def veredicto_humano(fila: dict[str, str]) -> str | None:
+    token = (fila.get(COLUMNA_CONTROLADA) or "").strip().lower()
+    if token in {"altera", "mantiene"}:
+        return token
+    if token == "no_aplica":
+        return "otro"
+    return normalizar_veredicto(fila.get(COLUMNA_PROSA) or "")
+
+
 def _wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     if n == 0:
         return 0.0, 1.0
@@ -194,12 +265,11 @@ def puntuar(revisado: Path) -> tuple[list[Exactitud], float, tuple[float, float]
     import io
 
     for fila in csv.DictReader(io.StringIO(leer_texto(revisado))):
-        if True:
-            humano = normalizar_veredicto(fila["VEREDICTO_HUMANO_altera_mantiene_otro"] or "")
-            if humano is None:
-                sin_revisar += 1
-                continue
-            por[fila["estrato"]].append((fila["veredicto_maquina"], humano))
+        humano = veredicto_humano(fila)
+        if humano is None:
+            sin_revisar += 1
+            continue
+        por[fila["estrato"]].append((fila["veredicto_maquina"], humano))
 
     resultados: list[Exactitud] = []
     for estrato, N in _tamanos_reales().items():
