@@ -210,6 +210,43 @@ que es lo que hace la capa 3 y lo que la tarea 1 está validando. **Hacer el cen
 sin leer el resolutivo produce un número que se va a citar mal**, y este es un
 subuniverso donde citar mal tiene consecuencias.
 
+### Decidido el 11-09-2026
+
+**Composición real del subuniverso** (muestra n=112), que esta tarea no tenía
+medida y que cambia el diseño:
+
+| Tipo de expediente | n | % |
+|---|---|---|
+| **Amparo en Única Instancia** | 80 | **71,4%** |
+| Apelación de Sentencia de Amparo | 30 | 26,8% |
+| Inconstitucionalidad de Carácter General | 2 | 1,8% |
+
+**La tarea 1 no desbloquea esto.** La validación se sortea sobre
+`apelaciones.jsonl`, universo *Apelación de Sentencia de Amparo*: terminarla
+valida el clasificador para el 26,8% y **no dice nada del 71,4%**. Y en ese 71,4%
+la pregunta ni siquiera aplica —en un amparo en única instancia no hay decisión
+inferior que confirmar o alterar—. De los 112 casos, sólo **27 (24%)** producen
+hoy un veredicto altera/mantiene.
+
+**Decisión 1 — dos indicadores, declarados por separado y nunca sumados:**
+
+- **Amparo en única instancia** → `Sentido de la sentencia` (otorga/deniega).
+  `KNOWN_ISSUES` §16 descarta ese campo **para apelaciones**, porque se refiere al
+  amparo y no a lo recurrido. Pero en única instancia **el amparo es la
+  decisión**, así que ahí §16 no aplica y el campo es el correcto. Hay que
+  normalizarlo: viene con motivo pegado —«Sin Lugar -Ausencia de agravio»— y
+  **16,1% vacío**.
+- **Apelación de sentencia de amparo** → capa 3, la que valida la tarea 1.
+
+**Decisión 2 — recolectar la metadata ya**, sin esperar al indicador. Sirve para
+cualquier diseño, y convierte el **812 —hoy estimación ponderada desde muestra,
+no conteo—** en un número real.
+
+Y de paso recomputa `antejuicio.json`, que es de las **14:29** del 30 de agosto,
+anterior al criterio del accesorio de las 16:26. Sólo **11 de sus 112 casos**
+cruzan con `apelaciones.jsonl` y ninguno de esos 11 difiere; **los otros 101 no
+están comprobados** —que no es lo mismo que estar bien—.
+
 ### Por qué sube de prioridad, y bajo qué condiciones
 
 Existe una investigación periodística externa que quiere exactamente este
@@ -263,27 +300,109 @@ antes (art. 43), **afirmativa ficta** (art. 44), recurso a los **15 días**
 
 ## 8. Subuniverso del Ministerio Público · ~2.500 documentos, ~1,4 h
 
-Petición 2.2. 329 en la muestra actual. Es la línea base para preguntar si la
-Corte resuelve distinto cuando quien pide amparo es la acusación.
+Petición 2.2. Es la línea base para preguntar si la Corte resuelve distinto
+cuando quien pide amparo es la acusación.
 
-Sentido registrado en la muestra: 194 «Sin Lugar», 123 «Con Lugar», 2
-«Parcialmente con Lugar», 8 sin campo.
+### Decidido el 11-09-2026
+
+**Composición**, contando por el campo `Postulante` sobre las 8.594 fichas de
+atributos: **324 fichas**, repartidas en
+
+| Tipo de expediente | n | % |
+|---|---|---|
+| Apelación de Sentencia de Amparo | 182 | 56,2% |
+| Amparo en Única Instancia | 140 | 43,2% |
+| Inconstitucionalidad de ley en Caso Concreto | 2 | 0,6% |
+
+Misma forma que el antejuicio y menos grave: aquí la tarea 1 cubre la mayoría,
+pero el 43,2% necesita igualmente el indicador de única instancia. **Se aplica la
+misma decisión de dos indicadores declarados por separado.**
+
+**Decisión 1 — familia normalizada y auditada.** El campo viene sin normalizar:
+
+```
+197  Ministerio Público
+ 25  Ministerio Público, por medio de la Unidad de Impugnaciones
+ 10  Fiscal General de la República y Jefe del Ministerio Público
+  5  Ministerio Publico                     <- sin tilde
+  5  Ministerio Público, por medio de la Unidad de Impugnaciones,
+  5  Ministerio Público, Unidad de Impugnaciones
+  4  Ministerio Público por medio de la Unidad de Impugnaciones
+  4  Ministerio Público, por medio de la Fiscalía de Ejecución
+  3  Unidad de Impugnaciones del Ministerio Público
+  2  Fiscalía de Ejecución del Ministerio Público
+```
+
+Se agrupan todas, incluidas Unidad de Impugnaciones, Fiscalía de Ejecución y
+Fiscal General: son el MP actuando. **El listado completo de variantes agrupadas
+se publica junto al dato**, para que la agrupación sea auditable. Es agrupación
+por criterio explícito, no filtro por subcadena a ciegas —que es lo que está
+prohibido en la lista del final—.
+
+**Decisión 2 — comparar contra el resto de postulantes, emparejando por materia y
+período.** Sin emparejar, si el MP litiga sobre todo en penal y el universo es
+mayoritariamente otra cosa, lo que se mida será composición y no trato. El
+universo comparable se calcula para toda la judicatura, no sólo para el sujeto de
+interés: pedirlo sólo para quien interesa mete el sesgo en la pregunta.
+
+**Pendiente de medir:** el sentido registrado en la muestra que citaba esta lista
+—194 «Sin Lugar», 123 «Con Lugar», 2 «Parcialmente», 8 sin campo— **no se ha
+recomputado** y sale del mismo campo que `KNOWN_ISSUES` §16 desaconseja para
+apelaciones. No usarlo hasta separarlo por tipo de expediente.
 
 ---
 
-## 9. Proporción de fallos con voto razonado por año · **adelanto gratis**
+## 9. Voto razonado · **RETRACTADO — no rehacer la serie**
 
-Media petición 2.3, y no cuesta ninguna consulta nueva a la fuente.
+*Reescrita el 11-09-2026. La versión anterior de esta tarea pedía justamente lo
+que el proyecto ya había retirado.*
 
-El arreglo de `resolutivo.py` del 30 de agosto detectó de paso que los fallos con
-voto razonado traen texto después del punto resolutivo, y que **son más
-frecuentes en años recientes**. Convertir ese hallazgo incidental en una serie
-explícita es, por sí solo, un indicador de cohesión de la Corte.
+**Lo que decía esta tarea:** que el arreglo de `resolutivo.py` detectó que los
+fallos con voto razonado traen texto después del punto resolutivo y son más
+frecuentes en años recientes, y que convertir eso en una serie explícita era
+«por sí solo, un indicador de cohesión de la Corte». Lo llamaba *adelanto
+gratis*.
 
-**Antes de gastar en la parte cara** —distinguir quién firma de quién disiente—
-medir sobre 30 documentos qué proporción trae voto disidente identificable y con
-qué formulación lo introduce. Si la formulación es estable es trabajo de regla; si
-no, conviene saberlo antes y no después.
+**Lo que dicen `KNOWN_ISSUES` §18 y la cabecera de `src/observatorio_gt/voto.py`:**
+
+> «**Conclusión: la serie mide cómo la Corte anota sus sentencias, no cuánto
+> disiente.** No debe publicarse como indicador de cohesión.»
+
+La observación era correcta y la explicación falsa. **Lo que sigue al resolutivo
+en documentos recientes es la firma electrónica** —«Firmado digitalmente por X,
+Razón: Aprobado»—, encabezados repetidos y bloques de firmas más largos. Y de los
+21 documentos marcados, **sólo 2 traen el texto del voto**; los otros 19 llevan
+una anotación junto al nombre del magistrado y nada más.
+
+La anotación desaparece después de 2010, pero **el formato del documento también
+cambió**: los paréntesis en el bloque de firmas pasaron de 45 a 232 documentos,
+sólo que ahora anotan montos de multa. No se puede distinguir desde aquí «dejó de
+haber disidencias» de «dejó de anotarse».
+
+**Cómo llegó a estar escrita como tarea pendiente:** la retractación y esta lista
+se escribieron el mismo día. La lista recogió el hallazgo incidental y no la
+corrección. Es el mismo error que el diagnóstico de cp1252 de la tarea 4, con más
+consecuencias: aquí lo que estaba en riesgo era **republicar algo ya retirado**.
+
+### Lo único que queda vivo, y no es esto
+
+`KNOWN_ISSUES` §18 cierra las dos vías que se probaron: la Gaceta Jurisprudencial
+**no sirve** —comprobado el 30-08-2026: son fichas por expediente, sin bloque de
+firmas; «disidente» y «razonado» aparecen **cero** veces en 345 páginas con el
+texto extraído limpio— y la detección por texto mide formato.
+
+Queda **pedirle la serie a la CC**, y ahora hay con qué. La Corte de
+Constitucionalidad es sujeto obligado por el **artículo 6 numeral 5** del Decreto
+57-2008, y la solicitud del OJ preparada en la tarea 7 sirve de plantilla:
+`sources/oj/solicitud_uip_oj_2026-09-11.md`.
+
+Redactarla con la misma disciplina del artículo 45 —**en el estado en que se
+encuentre, sin pedir procesamiento**—: no pedir «proporción de fallos con voto
+razonado», que es un cálculo y se rechaza, sino **el registro de votos razonados
+y disidentes por magistrado y expediente**, tal como la CC lo lleve.
+
+**Si no se puede medir, no se publica.** Que la pregunta sea interesante no la
+convierte en medible.
 
 ---
 
@@ -335,6 +454,13 @@ un documento que hay que abrir, no una identificación.
   reposición penal (33). Es la regla del nombre de órgano con otra cara: allí la
   trampa estaba en el campo equivocado, aquí en el **valor incompleto**.
   **Comparar contra el valor completo del campo, siempre.**
+- **Recoger en esta lista un hallazgo sin comprobar si fue retractado.**
+  *Añadido el 11-09-2026.* La tarea 9 pedía publicar la serie de voto razonado
+  como indicador de cohesión **el mismo día** en que `KNOWN_ISSUES` §18 la
+  retractaba por medir formato del documento. La lista recogió el hallazgo
+  incidental y no la corrección, y ahí se quedó nueve días. **Antes de escribir
+  una tarea que publique algo, comprobar que `KNOWN_ISSUES` no lo haya retirado.**
+  Una lista de tareas es documentación, y la documentación se desincroniza.
 - **Tantear codificaciones por excepción.** *Añadido el 11-09-2026.* `cp1252` y
   `latin-1` decodifican casi cualquier byte **sin lanzar error**, así que un bucle
   `for cod in (...): try: decode` devuelve siempre la primera de la lista y la
