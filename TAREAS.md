@@ -436,6 +436,41 @@ un documento que hay que abrir, no una identificación.
 
 ---
 
+## 12. Dos insumos y una pregunta, recibidos el 02-10-2026 · **sin empezar**
+
+Vienen de la misma investigación externa que menciona la tarea 6, y valen las
+mismas dos condiciones: se calcula para todo el universo y se publica aunque
+desmienta a quien lo pidió. **No se recibe ninguna hipótesis, solo fuentes.**
+
+**Insumo para la tarea 6 (y la 10, vinculación entre instancias).** El OJ
+publica una consulta de antejuicios
+(`consultasexternas.oj.gob.gt/consultasExternas/Antejuicios`). La pestaña
+«Búsqueda por Fechas», con competencia y fase obligatorias, devuelve el
+historial completo de cada fase sin importar el rango de fechas: año, número,
+fecha de admisión, nombres, competencia y fase. **No da el cargo ni la fecha de
+resolución.** El 02-10-2026 la Corte Suprema tenía 906 expedientes en 12 fases
+(desde fines de 2016). Existe una copia cruda de esas tablas: diez TSV, uno
+por fase, con `SHA256SUMS` y un encabezado de URL, parámetros y hora (ruta en
+`CONTEXTO_LOCAL.md`, que no se versiona). **Úsese solo la copia cruda, nunca
+los archivos derivados que la acompañan**, que traen una clasificación propia
+de la investigación. Defectos conocidos: un expediente puede aparecer en
+varias fases (19 de 906), y la fase registrada contradice a la prensa en varios
+casos. La pregunta es si el número CSJ (año-número) permite enlazar con el acto
+reclamado de las fichas de la CC.
+
+**Insumo para la tarea 5.** La consulta del OJ responde desde fuera de
+Guatemala por VPN (salida Proton «Guatemala», 02-10-2026). Sigue sin
+aclararse si el bloqueo anterior era geográfico.
+
+**Pregunta nueva: el amparo que detiene un proceso.** ¿Con qué frecuencia la CC
+otorga amparo **provisional**, y luego definitivo, en asuntos de elección de
+segundo grado (comisiones de postulación, elección de magistrados, de contralor
+y de fiscal general) frente al resto de su materia? La pregunta nace de la
+observación de que el amparo se usa para frenar o mover procesos. **Esa
+observación no está medida, y por eso es una pregunta y no una hipótesis.**
+Antes de diseñar nada: ¿el amparo provisional queda registrado en lo que publica
+la CC, o solo la sentencia?
+
 ## Cosas que NO hay que volver a intentar
 
 - **Buscar en el endpoint de texto libre para contar.** No hace búsqueda de
