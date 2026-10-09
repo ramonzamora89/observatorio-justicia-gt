@@ -180,6 +180,14 @@ Antes de graficar ese tramo, la cautela 2 de la auditoría: **un año reciente
 puede estar incompleto porque la CC aún no ha publicado**, no porque haya
 resuelto menos. Son cosas distintas y se parecen en el eje Y.
 
+**Medido el 08-10-2026: el hueco está en la muestra, no en el portal.** El
+censo de `ptmp` trae 4.146 sentencias con fecha de 2025 y 2.009 de 2026. Los
+comandos de arriba deberían llenarlo. Aparte, el censo tiene 7 fechas de
+sentencia imposibles (años 2027, 2033, 2088, 2209, 2501, 5013 y 5016). Hay que
+revisarlas antes de cualquier cálculo por año. La CC tiene además un sistema de
+jurisprudencia vigente distinto del que usamos (`sources/cc/FICHA_CONSULTAJUR.md`).
+No hace falta para esta tarea.
+
 ---
 
 ## 6. Censo completo del subuniverso de antejuicio · **lo más barato que queda**
@@ -486,6 +494,15 @@ observación no está medida, y por eso es una pregunta y no una hipótesis.**
 Antes de diseñar nada: ¿el amparo provisional queda registrado en lo que publica
 la CC, o solo la sentencia?
 
+**Respuesta parcial (08-10-2026): sí, al menos cuando se apela.** El sistema
+vigente de jurisprudencia de la CC (`consultajur`, no el `ptmp` del collector)
+publica **autos**, entre ellos «Apelación de auto de amparo provisional» y
+«Apelación de auto de suspensión», con expedientes de 2016 a 2026. En la CSJ,
+la ficha de cada amparo tiene un campo «Otorgado o denegado provisionalmente»
+(vacío en el único caso visto). Falta saber si aparece el provisional que la CC
+decide en sus propios amparos de única instancia. Ver
+`sources/cc/FICHA_CONSULTAJUR.md` y `sources/oj/FICHA_CONSULTA_AMPAROS.md`.
+
 **Pregunta nueva (08-10-2026): ¿cuánto tarda la corte según quién acciona?**
 Nace de un amparo del CACIF resuelto con rapidez mientras otros llevan años. El
 caso es la anécdota; la pregunta es para todos los accionantes. Lo que ya se
@@ -499,9 +516,17 @@ sabe de los datos:
   clasificarlo. **El portal solo publica lo resuelto**: los casos que llevan
   años esperando no están, y cualquier duración calculada así subestima la
   espera. El denominador de pendientes hay que pedirlo (registro de entradas
-  con fecha de ingreso y estado: información que ya existe, art. 45). Hay 81
-  fichas con fecha de sentencia anterior al año de su expediente: revisar
-  antes de calcular.
+  con fecha de ingreso y estado: información que ya existe, art. 45). La
+  consulta pública de expedientes de la CC exige crear cuenta, así que queda
+  fuera (`sources/cc/FICHA_CONSULTAJUR.md`). Hay 81 fichas con fecha de
+  sentencia anterior al año de su expediente: revisar antes de calcular.
+- **CSJ, consulta de amparos.** La ficha de cada amparo trae fecha de admisión
+  y actuaciones fechadas: **ahí la duración sí se mide en días**. El caso de
+  verificación, el amparo 2297-2023, tardó 35 días de la admisión al envío de
+  la sentencia a notificar. Pero cada consulta pide CAPTCHA y el número o el
+  nombre exacto, y no hay forma de listar por periodo: sirve para verificar
+  casos y armar muestras a mano, no para el universo
+  (`sources/oj/FICHA_CONSULTA_AMPAROS.md`).
 - **CSJ, consulta de antejuicios.** Trae justo lo que al portal de la CC le
   falta: los pendientes y su antigüedad. Al 02-10-2026, **«En trámite»: 68
   expedientes, antigüedad mediana ~2,9 años, 47 con más de dos años; «En
