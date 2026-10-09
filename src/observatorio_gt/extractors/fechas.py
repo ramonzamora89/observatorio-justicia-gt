@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Iterable
+from dataclasses import dataclass
 from datetime import date
 
 UNIDADES: dict[str, int] = {
@@ -102,17 +104,37 @@ def numero_en_letras(frase: str) -> int | None:
 # documento escribe «...de mil novecientos noventa y nueve En apelacion...» sin
 # punto, el patron no encajaba, y el parser saltaba a la fecha de la sentencia
 # apelada -- que es otro hecho, de otro tribunal y de otro ano.
-_PALABRAS_NUMERO = sorted(
-    set(UNIDADES) | set(DECENAS) | set(CENTENAS) | {"mil", "y"}, key=len, reverse=True
-)
-_NUM = r"(?:" + "|".join(_PALABRAS_NUMERO) + r")"
+#
+# Y se construye con GRAMATICA, no como una lista de palabras repetibles. La
+# version anterior aceptaba cualquier numeral tras «mil», incluido «y»: «el
+# veintisiete de junio de dos mil siete y dos de julio» se leia como 2009, y
+# «dos mil veintiuno y cinco de enero» como 2026. Era plausible y falso. En
+# castellano la «y» de un numeral solo va entre la decena y la unidad
+# («noventa y ocho»), y eso es lo unico que se acepta ahora.
+def _alt(palabras: Iterable[str]) -> str:
+    return "|".join(sorted(palabras, key=len, reverse=True))
+
+
+_UNO_A_NUEVE = _alt(["uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"])
+_UNIDAD = _alt(set(UNIDADES) - {"primero", "veintiuna"})
+_DECENA = _alt(DECENAS)
+_CENTENA = _alt(CENTENAS)
+#: 1 a 99: «ocho», «veintiuno», «noventa y ocho».
+_HASTA_99 = rf"(?:(?:{_DECENA})(?:\s+y\s+(?:{_UNO_A_NUEVE}))?|{_UNIDAD})"
+#: «dos mil trece», «mil novecientos noventa y ocho», «dos mil».
+_ANIO = rf"(?:dos\s+)?mil(?:\s+(?:{_CENTENA}))?(?:\s+{_HASTA_99})?"
+#: «primero», «treinta y uno», «quince».
+_DIA = rf"(?:treinta\s+y\s+uno|{_alt(UNIDADES)})"
 _MESES_ALT = "|".join(MESES)
 
-#: «treinta y uno de octubre de dos mil trece»
+#: «treinta y uno de octubre de dos mil trece». Admite las variantes y erratas
+#: que trae el corpus: «del dos mil», «del año dos mil», la preposicion omitida
+#: («diciembre dos mil diecinueve») o pegada («diciembrede», «marzodedos»), y el
+#: articulo pegado al dia («eltres de junio»).
 _FECHA_EN_LETRAS = re.compile(
-    rf"\b(?P<dia>{_NUM}(?:\s+{_NUM})*?)\s+de\s+"
-    rf"(?P<mes>{_MESES_ALT})\s+de\s+"
-    rf"(?P<anio>(?:dos\s+)?mil(?:\s+{_NUM})*)",
+    rf"(?:\b|(?<=\bel))(?P<dia>{_DIA})\s+de\s+"
+    rf"(?P<mes>{_MESES_ALT})\s*,?\s*(?:del?(?:\s+ano)?\s*)?"
+    rf"(?P<anio>{_ANIO})\b",
     re.IGNORECASE,
 )
 
@@ -194,3 +216,63 @@ def fecha_de_resolucion(texto: str) -> tuple[date, str, bool] | None:
     if suelta is None:
         return None
     return suelta[0], suelta[1], False
+
+
+# -- fecha de presentacion ------------------------------------------------
+#: El apartado donde la sentencia de amparo dice cuando se presento la accion:
+#: «ANTECEDENTES I. EL AMPARO A) Interposicion y autoridad: presentado el ...».
+#: Desde 2017 el rotulo es «Solicitud y autoridad». Se busca sobre texto plano.
+_APARTADO_PRESENTACION = re.compile(
+    r"\bA\)\s*(?:Interposicion|Solicitud|Presentacion)[^:]{0,60}:", re.IGNORECASE
+)
+_FIN_APARTADO = re.compile(r"\bB\)")
+#: Varias acciones acumuladas, cada una con su fecha: «presentados,
+#: respectivamente, el veinte y treinta y uno de agosto». La primera fecha que
+#: se lee no es la de todas, y elegir una seria inventar.
+_VARIAS = re.compile(
+    r"\b(?:presentad[oa]s|presentaron|interpusieron|planteadas|respectivamente)\b",
+    re.IGNORECASE,
+)
+_ANTE_LA_CC = re.compile(r"\ben\s+esta\s+Corte\b|Corte\s+de\s+Constitucionalidad", re.IGNORECASE)
+
+
+@dataclass(frozen=True)
+class Presentacion:
+    """Lo que dice el apartado de presentacion. ``fecha`` puede ser ``None``.
+
+    ``ante_la_cc`` distingue dos medidas distintas. En una **apelacion** el
+    amparo se presento ante el tribunal de primer grado, asi que la resta hasta
+    la sentencia de la CC mide **todo el proceso**, no el tiempo de la CC. En
+    **unica instancia** se presenta «en esta Corte» y si mide a la CC.
+    """
+
+    fecha: date | None
+    cita: str | None
+    apartado: str
+    varias: bool
+    ante_la_cc: bool
+
+
+def fecha_de_presentacion(texto: str) -> Presentacion | None:
+    """Fecha de presentacion de un amparo, leida de su apartado.
+
+    ``None`` si el documento no tiene el apartado: las inconstitucionalidades,
+    por ejemplo, no lo traen. No se cae a otra fecha del texto: la primera fecha
+    suelta de una sentencia es la del acto reclamado o la del fallo apelado.
+    """
+    plana = " ".join(plano(texto).split())
+    original = " ".join(texto.split())  # mismos indices: plano no cambia longitudes
+    ancla = _APARTADO_PRESENTACION.search(plana)
+    if ancla is None:
+        return None
+    fin = _FIN_APARTADO.search(plana, ancla.end(), ancla.end() + 800)
+    corte = fin.start() if fin else ancla.end() + 400
+    apartado = original[ancla.end() : corte].strip()
+    varias = _VARIAS.search(apartado) is not None
+    ante_la_cc = _ANTE_LA_CC.search(apartado) is not None
+    if varias:
+        return Presentacion(None, None, apartado, True, ante_la_cc)
+    encontrada = fecha_en_letras(apartado)
+    if encontrada is None:
+        return Presentacion(None, None, apartado, False, ante_la_cc)
+    return Presentacion(encontrada[0], encontrada[1], apartado, False, ante_la_cc)

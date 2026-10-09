@@ -386,6 +386,52 @@ def cc_pdfs(
         raise typer.Exit(code=3)
 
 
+@cc_app.command("presentacion")
+def cc_presentacion(
+    raiz: Path = typer.Option(..., help="Raíz de datos crudos donde están los PDF."),
+    muestra_path: Path = typer.Option(Path("data/processed/cc_ptmp/muestra.jsonl")),
+    manifest: Path = typer.Option(Path("data/manifests/cc_ptmp/pdfs_muestra.jsonl")),
+    salida: Path = typer.Option(Path("data/processed/cc_ptmp/presentacion_muestra.jsonl")),
+    procesos: int = typer.Option(4, help="Procesos en paralelo; pdftotext es el cuello"),
+    limite: int | None = typer.Option(None, help="Solo los primeros N documentos (pruebas)"),
+    pretty: bool = typer.Option(False),
+) -> None:
+    """Lee la fecha de presentación de cada amparo de la muestra en su PDF.
+
+    Reanudable: salta los ids que ya están en SALIDA. Sin OCR: un texto que no
+    pasa la comprobación de calidad queda para revisión humana.
+    """
+    from concurrent.futures import ProcessPoolExecutor
+    from itertools import islice
+
+    from observatorio_gt import presentacion
+
+    configure(pretty=pretty)
+    if not raiz.is_dir():
+        typer.echo(f"{raiz} no existe. ¿Está conectado el disco?", err=True)
+        raise typer.Exit(code=2)
+    muestra = [
+        json.loads(linea)
+        for linea in muestra_path.read_text(encoding="utf-8").splitlines()
+        if linea.strip()
+    ]
+    tareas = list(presentacion.pendientes(manifest, muestra, presentacion.ya_hechos(salida)))
+    if limite is not None:
+        tareas = list(islice(tareas, limite))
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    ocr_dir = salida.parent / "ocr_no_usado"
+    with ProcessPoolExecutor(procesos) as ex, salida.open("a", encoding="utf-8") as fh:
+        futuros = [
+            ex.submit(presentacion.extraer_uno, raiz / ruta, doc, ocr_dir) for ruta, doc in tareas
+        ]
+        for fut in futuros:
+            fh.write(json.dumps(fut.result(), ensure_ascii=False) + "\n")
+            fh.flush()
+    typer.echo(f"\nprocesados ahora: {len(tareas):,}")
+    for estado, n in sorted(presentacion.resumen(salida).items()):
+        typer.echo(f"{estado:<22}: {n:,}")
+
+
 @cc_app.command("estudio-apelaciones")
 def cc_estudio(
     config: Path = typer.Option(DEFAULT_CONFIG),

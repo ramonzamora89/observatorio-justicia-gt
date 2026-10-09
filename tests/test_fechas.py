@@ -7,6 +7,7 @@ from datetime import date
 import pytest
 
 from observatorio_gt.extractors.fechas import (
+    fecha_de_presentacion,
     fecha_de_resolucion,
     numero_en_letras,
     parse_fecha,
@@ -104,3 +105,65 @@ def test_sin_encabezado_cae_a_la_primera_pero_lo_declara() -> None:
     assert resultado is not None
     assert resultado[0] == date(2010, 3, 3)
     assert resultado[2] is False
+
+
+# -- el año no se traga lo que sigue a la «y» ------------------------------
+@pytest.mark.parametrize(
+    ("texto", "esperado"),
+    [
+        # Leidos antes como 2009 y 2026: plausibles y falsos.
+        ("el veintisiete de junio de dos mil siete y dos de julio", date(2007, 6, 27)),
+        ("el veintidós de diciembre de dos mil veintiuno y cinco de enero", date(2021, 12, 22)),
+        ("treinta y uno de agosto de mil novecientos noventa y ocho", date(1998, 8, 31)),
+        ("el dieciséis de mayo del dos mil cinco.", date(2005, 5, 16)),
+        ("el dieciséis de diciembre dos mil diecinueve, en esta Corte", date(2019, 12, 16)),
+        ("presentado eltres de junio de dos mil dieciséis,en el Centro", date(2016, 6, 3)),
+    ],
+)
+def test_anio_con_gramatica(texto: str, esperado: date) -> None:
+    resultado = parse_fecha(texto)
+    assert resultado is not None and resultado[0] == esperado
+
+
+# -- fecha de presentacion ------------------------------------------------
+APELACION = (
+    "ANTECEDENTES I. EL AMPARO A) Interposición y autoridad: presentado el\n"
+    "veinticuatro de febrero de dos mil siete, en el Juzgado Primero de Paz de Turno y,\n"
+    "posteriormente, remitido a la Sala. B) Acto reclamado: resolución de diez de\n"
+    "enero de dos mil siete."
+)
+
+
+def test_presentacion_lee_su_apartado_no_el_acto_reclamado() -> None:
+    p = fecha_de_presentacion(APELACION)
+    assert p is not None
+    assert p.fecha == date(2007, 2, 24)
+    assert p.ante_la_cc is False
+    assert "Acto reclamado" not in p.apartado
+
+
+def test_presentacion_en_unica_instancia_es_ante_la_cc() -> None:
+    texto = (
+        "A) Solicitud y autoridad: presentado el siete de julio de dos mil diecisiete, "
+        "en esta Corte. B) Acto reclamado: resolución de diez de abril de dos mil diecisiete."
+    )
+    p = fecha_de_presentacion(texto)
+    assert p is not None and p.fecha == date(2017, 7, 7) and p.ante_la_cc is True
+
+
+def test_varias_acciones_no_eligen_una_fecha() -> None:
+    texto = (
+        "A) Solicitud y autoridad: presentados, respectivamente, el veinte y treinta y uno "
+        "de agosto de dos mil quince, en esta Corte. B) Actos reclamados: ..."
+    )
+    p = fecha_de_presentacion(texto)
+    assert p is not None and p.varias is True and p.fecha is None
+
+
+def test_sin_apartado_no_cae_a_otra_fecha() -> None:
+    """Una inconstitucionalidad no trae el apartado; la primera fecha es otra cosa."""
+    texto = (
+        "ANTECEDENTES I. FUNDAMENTOS JURÍDICOS DE LA IMPUGNACIÓN a) el veintiséis de "
+        "febrero de mil novecientos noventa y ocho, el Congreso aprobó el Decreto 15-98."
+    )
+    assert fecha_de_presentacion(texto) is None
