@@ -480,6 +480,14 @@ de la fuente cuando se escriba, y cada captura anota si usó VPN, con qué salid
 y qué código de estado devolvió. Cuando sea fácil, probar también sin VPN y
 anotarlo: si responde, deja de hacer falta.
 
+**Prueba sin VPN (09-10-2026, 02:49 UTC, salida en Miami, con `curl` y el
+user-agent del proyecto).** `consultasexternas.oj.gob.gt` (antejuicios y
+amparos) devolvió 403 de 334 bytes, la firma de Radware. `cc.gob.gt` devolvió
+403 con el desafío de Cloudflare. En la CC el bloqueo es contra clientes que no
+son navegador, con o sin VPN. En el OJ falta separar país de navegador: abrir la
+consulta en Chrome **sin VPN**. Ojo: el 02-10 ipinfo ubicó la salida Proton
+«Guatemala» también en Miami. Quizá esa salida no sale de Guatemala.
+
 Aparte de la VPN: la «Búsqueda por Fechas» pide reCAPTCHA, que marca una
 persona. Es legítimo, pero hace de esta una **fuente de captura manual**: no
 puede entrar a un collector automático ni a una corrida programada, y cada
