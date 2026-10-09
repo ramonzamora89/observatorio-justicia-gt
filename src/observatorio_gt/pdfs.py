@@ -30,9 +30,17 @@ import httpx
 import structlog
 
 from observatorio_gt import __version__
+from observatorio_gt.censo import anio_de
 from observatorio_gt.collectors.cc_ptmp import SOURCE_ID, normalize_document_url
 from observatorio_gt.net.cache import DiskCache
-from observatorio_gt.net.checks import EXPECT_PDF, FetchOutcome, evaluate
+from observatorio_gt.net.checks import (
+    EXPECT_DOC,
+    EXPECT_DOCX,
+    EXPECT_PDF,
+    Expectation,
+    FetchOutcome,
+    evaluate,
+)
 from observatorio_gt.net.client import PoliteClient, RequestBudgetExceeded, ThrottledError
 from observatorio_gt.storage import store_immutable
 
@@ -43,6 +51,24 @@ DOWNLOADER_VERSION = f"cc_ptmp_pdfs/{__version__}"
 MIN_LIBRE_BYTES = 2 * 1024**3
 
 
+#: Extension del documento -> lo que debe cumplir la respuesta.
+FORMATOS: dict[str, Expectation] = {"pdf": EXPECT_PDF, "doc": EXPECT_DOC, "docx": EXPECT_DOCX}
+
+
+def formato(url: str) -> tuple[str, Expectation]:
+    ext = url.rsplit(".", 1)[-1].lower()
+    return (ext, FORMATOS[ext]) if ext in FORMATOS else ("pdf", EXPECT_PDF)
+
+
+def anio_doc(doc: dict[str, Any]) -> int | None:
+    """Año del estrato si viene de la muestra; si no, el del expediente."""
+    if doc.get("estrato_anio") is not None:
+        return int(doc["estrato_anio"])
+    expedientes = doc.get("expedientes") or []
+    anio, _ = anio_de(expedientes[0]) if expedientes else (None, None)
+    return int(anio) if anio else None
+
+
 class DestinoNoDisponible(RuntimeError):
     """El destino no existe o no tiene espacio: probablemente el disco no está."""
 
@@ -51,6 +77,7 @@ class DestinoNoDisponible(RuntimeError):
 class ProgresoPdfs:
     ok_red: int = 0
     ok_cache: int = 0
+    ok_previo: int = 0
     fallidos: int = 0
     saltados: int = 0
     detenido_por: str | None = None
@@ -80,7 +107,9 @@ def ids_ok(manifest: Path) -> set[str]:
     return {i for i, o in ultimo.items() if o == FetchOutcome.OK}
 
 
-def _desde_cache(cache: DiskCache | None, url: str) -> tuple[bytes, float] | None:
+def _desde_cache(
+    cache: DiskCache | None, url: str, expect: Expectation = EXPECT_PDF
+) -> tuple[bytes, float] | None:
     if cache is None:
         return None
     hit = cache.get(cache.key("GET", url))
@@ -88,7 +117,7 @@ def _desde_cache(cache: DiskCache | None, url: str) -> tuple[bytes, float] | Non
         return None
     resp = httpx.Response(hit.status_code, headers=hit.headers, content=hit.content,
                           request=httpx.Request("GET", url))
-    outcome, _ = evaluate(resp, EXPECT_PDF)
+    outcome, _ = evaluate(resp, expect)
     return (hit.content, hit.fetched_at) if outcome is FetchOutcome.OK else None
 
 
@@ -114,7 +143,14 @@ def descargar(
     cache_lectura: DiskCache | None = None,
     min_libre: int = MIN_LIBRE_BYTES,
     revisar_disco_cada: int = 50,
+    previos: dict[str, dict[str, Any]] | None = None,
 ) -> ProgresoPdfs:
+    """Descarga cada documento de ``muestra`` (o del censo) a ``destino``.
+
+    ``previos``: registros ``ok`` de otro manifest (p. ej. la muestra) cuyo
+    archivo ya esta en ``destino``. Se copian al manifest con ``origen=previo``
+    en vez de pedirlos otra vez, si el archivo existe y pesa lo registrado.
+    """
     comprobar_destino(destino, min_libre)
     manifest.parent.mkdir(parents=True, exist_ok=True)
     hechos = ids_ok(manifest)
@@ -143,10 +179,23 @@ def descargar(
                     break
 
             canonical, _ = normalize_document_url(doc["pdf"])
-            anio = doc.get("estrato_anio")
-            anio = int(anio) if anio is not None else None
+            ext, expect = formato(canonical)
+            anio = anio_doc(doc)
 
-            cacheado = _desde_cache(cache_lectura, canonical)
+            previo = (previos or {}).get(doc_id)
+            if previo is not None:
+                archivo = destino / previo["ruta_relativa"]
+                if archivo.is_file() and archivo.stat().st_size == previo["bytes"]:
+                    fh.write(json.dumps(_registro(doc, canonical, origen="previo",
+                             outcome=FetchOutcome.OK, bytes=previo["bytes"],
+                             sha256=previo["sha256"], ruta_relativa=previo["ruta_relativa"],
+                             http_status=previo.get("http_status"),
+                             descargado_en=previo.get("descargado_en")),
+                             ensure_ascii=False) + "\n")
+                    prog.ok_previo += 1
+                    continue
+
+            cacheado = _desde_cache(cache_lectura, canonical, expect)
             if cacheado is not None:
                 contenido, fetched_at = cacheado
                 origen = "cache"
@@ -156,7 +205,7 @@ def descargar(
                 }
             else:
                 try:
-                    resp, rec = client.get(canonical, expect=EXPECT_PDF, use_cache=False,
+                    resp, rec = client.get(canonical, expect=expect, use_cache=False,
                                            headers={"Accept-Encoding": "identity"})
                 except (ThrottledError, RequestBudgetExceeded) as exc:
                     prog.detenido_por = f"{type(exc).__name__}: {exc}"
@@ -182,7 +231,7 @@ def descargar(
                 extra = {"http_status": rec.http_status,
                          "descargado_en": rec.requested_at.isoformat()}
 
-            ruta, digest, _ = store_immutable(destino, SOURCE_ID, anio, contenido, ext="pdf")
+            ruta, digest, _ = store_immutable(destino, SOURCE_ID, anio, contenido, ext=ext)
             fh.write(json.dumps(_registro(doc, canonical, origen=origen,
                      outcome=FetchOutcome.OK, bytes=len(contenido), sha256=digest,
                      ruta_relativa=str(ruta.relative_to(destino)), **extra),

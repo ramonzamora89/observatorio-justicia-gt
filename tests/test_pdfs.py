@@ -110,3 +110,46 @@ def test_no_descarga_si_el_destino_no_existe(tmp_path: Path, clock: FakeClock) -
         pdfs.descargar(client, [doc("1", URL_A)], tmp_path / "no_montado", tmp_path / "m.jsonl")
     assert llamadas == []
     assert not (tmp_path / "no_montado").exists()
+
+
+def test_word_se_guarda_con_su_extension(tmp_path: Path, clock: FakeClock) -> None:
+    destino = tmp_path / "raw"
+    destino.mkdir()
+    manifest = tmp_path / "m.jsonl"
+    doc_ = httpx.Response(200, headers={"content-type": "application/msword"},
+                          content=b"\xd0\xcf\x11\xe0" + b"x" * 4000)
+    url = "http://143.208.58.124/Sentencias/3.30-2006.doc"
+    with make_client(handler({"/Sentencias/3.30-2006.doc": doc_}, []), clock=clock) as client:
+        prog = pdfs.descargar(client, [doc("3", url)], destino, manifest, min_libre=0)
+    assert prog.ok_red == 1
+    (r,) = leer(manifest)
+    assert r["ruta_relativa"].endswith(".doc")
+
+
+def test_censo_sin_estrato_usa_el_anio_del_expediente(tmp_path: Path, clock: FakeClock) -> None:
+    destino = tmp_path / "raw"
+    destino.mkdir()
+    manifest = tmp_path / "m.jsonl"
+    ficha = {"id": "1", "expedientes": ["10-98"], "pdf": URL_A}
+    with make_client(handler({"/Sentencias/1.10-2020.pdf": pdf_ok()}, []), clock=clock) as client:
+        pdfs.descargar(client, [ficha], destino, manifest, min_libre=0)
+    (r,) = leer(manifest)
+    assert r["ruta_relativa"].startswith("cc_ptmp/1998/")
+
+
+def test_previos_no_se_vuelven_a_pedir(tmp_path: Path, clock: FakeClock) -> None:
+    destino = tmp_path / "raw"
+    destino.mkdir()
+    m1 = tmp_path / "muestra.jsonl"
+    with make_client(handler({"/Sentencias/1.10-2020.pdf": pdf_ok()}, []), clock=clock) as client:
+        pdfs.descargar(client, [doc("1", URL_A)], destino, m1, min_libre=0)
+    previos = {r["id"]: r for r in leer(m1)}
+    llamadas: list[str] = []
+    m2 = tmp_path / "universo.jsonl"
+    with make_client(handler({"/Sentencias/2.20-2020.pdf": pdf_ok()}, llamadas),
+                     clock=clock) as client:
+        prog = pdfs.descargar(client, [doc("1", URL_A), doc("2", URL_B)], destino, m2,
+                              min_libre=0, previos=previos)
+    assert prog.ok_previo == 1 and prog.ok_red == 1
+    assert llamadas == ["/Sentencias/2.20-2020.pdf"]
+    assert pdfs.ids_ok(m2) == {"1", "2"}

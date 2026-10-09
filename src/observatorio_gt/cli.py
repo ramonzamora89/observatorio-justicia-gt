@@ -8,6 +8,7 @@ import uuid
 from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
+from typing import Any
 
 import structlog
 import typer
@@ -340,13 +341,19 @@ def cc_atributos(
 def cc_pdfs(
     destino: Path = typer.Option(..., help="Raíz de datos crudos. Debe existir: no se crea."),
     config: Path = typer.Option(DEFAULT_CONFIG),
-    muestra_path: Path = typer.Option(Path("data/processed/cc_ptmp/muestra.jsonl")),
+    muestra_path: Path = typer.Option(
+        Path("data/processed/cc_ptmp/muestra.jsonl"),
+        help="Documentos a bajar: la muestra o un censo completo (mismo formato)",
+    ),
     manifest: Path = typer.Option(Path("data/manifests/cc_ptmp/pdfs_muestra.jsonl")),
+    previos: Path | None = typer.Option(
+        None, help="Manifest de una descarga anterior al mismo DESTINO: no se repite"
+    ),
     limite: int | None = typer.Option(None, help="Solo los primeros N documentos (pruebas)"),
     max_peticiones: int = typer.Option(10000, help="Cortacircuitos"),
     pretty: bool = typer.Option(False, help="Log legible; por defecto JSON"),
 ) -> None:
-    """Descarga los PDF de la muestra a DESTINO, con manifest y hash.
+    """Descarga los documentos (PDF o Word) a DESTINO, con manifest y hash.
 
     Reanudable: volver a lanzarlo salta lo ya descargado y reintenta lo fallido.
     """
@@ -366,11 +373,21 @@ def cc_pdfs(
     ]
     if limite is not None:
         seleccion = seleccion[:limite]
+    registros_previos: dict[str, dict[str, Any]] = {}
+    if previos is not None:
+        with previos.open(encoding="utf-8") as fh:
+            for linea in fh:
+                r = json.loads(linea)
+                if r["outcome"] == "ok":
+                    registros_previos[str(r["id"])] = r
+                else:
+                    registros_previos.pop(str(r["id"]), None)
     try:
         with PoliteClient(policy, cache=None) as client:
             prog = pdfs.descargar(
                 client, seleccion, destino, manifest,
                 cache_lectura=DiskCache(cfg.cache_root, ttl_s=0),
+                previos=registros_previos,
             )
     except pdfs.DestinoNoDisponible as exc:
         typer.echo(f"No se descarga: {exc}", err=True)
@@ -380,6 +397,7 @@ def cc_pdfs(
     typer.echo(f"ya estaban  : {prog.saltados:,}")
     typer.echo(f"de la red   : {prog.ok_red:,}")
     typer.echo(f"de la cache : {prog.ok_cache:,}")
+    typer.echo(f"ya bajados  : {prog.ok_previo:,}  (de --previos)")
     typer.echo(f"fallidos    : {prog.fallidos:,}  (no comprobados, no ausentes)")
     if prog.detenido_por:
         typer.echo(f"DETENIDO    : {prog.detenido_por}")

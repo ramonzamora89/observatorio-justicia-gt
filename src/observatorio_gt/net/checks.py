@@ -86,6 +86,21 @@ EXPECT_PDF = Expectation(
     required_markers=("%PDF-",),
 )
 
+#: Algunas sentencias se publicaron en Word. Son documentos reales, no errores:
+#: en la muestra, 13 de 8.594 llegaron como `application/msword`.
+EXPECT_DOC = Expectation(
+    kind="pdf",
+    min_bytes=2048,
+    content_type_prefix="application/msword",
+)
+
+EXPECT_DOCX = Expectation(
+    kind="pdf",
+    min_bytes=2048,
+    content_type_prefix="application/vnd.openxmlformats-officedocument.wordprocessingml",
+    required_markers=("PK",),
+)
+
 EXPECT_ROBOTS = Expectation(
     kind="text",
     min_bytes=1,
