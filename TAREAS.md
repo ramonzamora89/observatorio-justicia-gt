@@ -484,9 +484,16 @@ anotarlo: si responde, deja de hacer falta.
 user-agent del proyecto).** `consultasexternas.oj.gob.gt` (antejuicios y
 amparos) devolvió 403 de 334 bytes, la firma de Radware. `cc.gob.gt` devolvió
 403 con el desafío de Cloudflare. En la CC el bloqueo es contra clientes que no
-son navegador, con o sin VPN. En el OJ falta separar país de navegador: abrir la
-consulta en Chrome **sin VPN**. Ojo: el 02-10 ipinfo ubicó la salida Proton
-«Guatemala» también en Miami. Quizá esa salida no sale de Guatemala.
+son navegador, con o sin VPN.
+
+**En el OJ, resuelto (09-10-2026):** Moncho abrió
+`consultasExternas/Amparos` en Chrome **sin VPN** y recibió `403 Forbidden`
+con un «Transaction ID», el formato de Radware. Con VPN, el mismo navegador
+la abrió el 08-10. **Lo que decide es la IP de salida, no el cliente: la VPN
+hace falta.** Lo más probable es un bloqueo geográfico. No se descarta un
+bloqueo por reputación de IP, porque ipinfo ubicó en Miami tanto la conexión
+directa como la salida Proton «Guatemala» (02-10). El OJ y ipinfo pueden usar
+bases de geolocalización distintas.
 
 Aparte de la VPN: la «Búsqueda por Fechas» pide reCAPTCHA, que marca una
 persona. Es legítimo, pero hace de esta una **fuente de captura manual**: no
