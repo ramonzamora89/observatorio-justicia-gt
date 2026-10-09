@@ -1,6 +1,7 @@
 # Ficha de fuente — Sistema de Consulta de Jurisprudencia de la CC (`consultajur`)
 
-**Consultado:** 2026-10-08, a mano, desde Chrome (operado con Claude in Chrome).
+**Consultado:** 2026-10-08, a mano, desde Chrome (operado con Claude in Chrome),
+con VPN encendida (salida no anotada).
 **Pregunta:** ¿qué ofrece la CC además del portal que usa el collector
 (`jurisprudencia.cc.gob.gt/ptmp`, ver `jurisprudencia/FICHA_CC_PTMP.md`)?
 

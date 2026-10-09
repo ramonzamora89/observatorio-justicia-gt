@@ -1,8 +1,9 @@
 # Ficha de fuente — Consulta de amparos de la Cámara de Amparo y Antejuicio (CSJ)
 
 **Consultado:** 2026-10-08, a mano, desde Chrome (operado con Claude in Chrome).
-CAPTCHA marcado por Moncho en cada consulta. VPN: no confirmado para esta
-sesión (ver la decisión sobre VPN en la tarea 12 de `TAREAS.md`).
+CAPTCHA marcado por Moncho en cada consulta. **Todas las consultas con VPN
+encendida**; la ubicación de salida no se anotó (ver la decisión sobre VPN en la
+tarea 12 de `TAREAS.md`). Sin probar sin VPN: no se sabe si hace falta.
 **Pregunta:** ¿qué dice el OJ, en público, de los amparos que conoce la Corte
 Suprema?
 
