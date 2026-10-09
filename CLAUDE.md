@@ -18,6 +18,9 @@ No intentes construir todo el sistema de una vez. Trabaja mediante tareas peque�
 ## Restricciones de investigación
 - Solo fuentes públicas y legalmente accesibles.
 - No evadir CAPTCHA, login ni controles de acceso.
+  - Excepción acotada (08-10-2026): se permite usar VPN para salvar un bloqueo
+    **geográfico** de información pública (p. ej. consultas del OJ). No vale
+    para CAPTCHA, login ni credenciales. Cada captura anota si usó VPN.
 - Rate-limit collectors.
 - Conservar URL y hash de cada documento.
 - Nunca convertir inferencias en hechos.

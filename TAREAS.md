@@ -436,7 +436,7 @@ un documento que hay que abrir, no una identificación.
 
 ---
 
-## 12. Dos insumos y una pregunta, recibidos el 02-10-2026 · **sin empezar**
+## 12. Dos insumos y dos preguntas, recibidos el 02-10 y el 08-10-2026 · **sin empezar**
 
 Vienen de la misma investigación externa que menciona la tarea 6, y valen las
 mismas dos condiciones: se calcula para todo el universo y se publica aunque
@@ -458,9 +458,24 @@ varias fases (19 de 906), y la fase registrada contradice a la prensa en varios
 casos. La pregunta es si el número CSJ (año-número) permite enlazar con el acto
 reclamado de las fichas de la CC.
 
-**Insumo para la tarea 5.** La consulta del OJ responde desde fuera de
-Guatemala por VPN (salida Proton «Guatemala», 02-10-2026). Sigue sin
-aclararse si el bloqueo anterior era geográfico.
+**Insumo para la tarea 5.** La consulta del OJ respondió desde fuera de
+Guatemala por VPN (salida Proton «Guatemala», 02-10-2026). **No está probado
+que la VPN sea la causa**: el servicio de geolocalización ubicó la IP de salida
+en Miami, el sitio daba 403 el 03-09, y nadie probó sin VPN. Puede que el
+bloqueo simplemente haya cambiado.
+
+**Decisión (08-10-2026, Moncho): se usa VPN.** Es información pública por ley,
+y el bloqueo geográfico no distingue a nadie más que por país. El alcance es
+estrecho: la VPN sirve para salvar el país de salida y para nada más. No
+autoriza saltar CAPTCHA, login ni credenciales (ver `CLAUDE.md`). Va en la ficha
+de la fuente cuando se escriba, y cada captura anota si usó VPN, con qué salida
+y qué código de estado devolvió. Cuando sea fácil, probar también sin VPN y
+anotarlo: si responde, deja de hacer falta.
+
+Aparte de la VPN: la «Búsqueda por Fechas» pide reCAPTCHA, que marca una
+persona. Es legítimo, pero hace de esta una **fuente de captura manual**: no
+puede entrar a un collector automático ni a una corrida programada, y cada
+captura debe guardar quién la hizo, cuándo y con qué parámetros.
 
 **Pregunta nueva: el amparo que detiene un proceso.** ¿Con qué frecuencia la CC
 otorga amparo **provisional**, y luego definitivo, en asuntos de elección de
@@ -470,6 +485,33 @@ observación de que el amparo se usa para frenar o mover procesos. **Esa
 observación no está medida, y por eso es una pregunta y no una hipótesis.**
 Antes de diseñar nada: ¿el amparo provisional queda registrado en lo que publica
 la CC, o solo la sentencia?
+
+**Pregunta nueva (08-10-2026): ¿cuánto tarda la corte según quién acciona?**
+Nace de un amparo del CACIF resuelto con rapidez mientras otros llevan años. El
+caso es la anécdota; la pregunta es para todos los accionantes. Lo que ya se
+sabe de los datos:
+
+- **CC, portal.** El censo (66.025 fichas) da año del expediente y fecha de
+  sentencia: la duración queda acotada en un intervalo de hasta un año, no en
+  días. La fecha exacta de presentación suele estar en el texto de la
+  sentencia, y hoy solo hay 20 PDF. `Postulante` existe solo en la muestra
+  (6.253 fichas), es texto libre (4.689 valores distintos) y habría que
+  clasificarlo. **El portal solo publica lo resuelto**: los casos que llevan
+  años esperando no están, y cualquier duración calculada así subestima la
+  espera. El denominador de pendientes hay que pedirlo (registro de entradas
+  con fecha de ingreso y estado: información que ya existe, art. 45). Hay 81
+  fichas con fecha de sentencia anterior al año de su expediente: revisar
+  antes de calcular.
+- **CSJ, consulta de antejuicios.** Trae justo lo que al portal de la CC le
+  falta: los pendientes y su antigüedad. Al 02-10-2026, **«En trámite»: 68
+  expedientes, antigüedad mediana ~2,9 años, 47 con más de dos años; «En
+  pesquisa»: 24, mediana ~5,4 años, 20 con más de dos.** Con el interponente
+  de la copia cruda se puede comparar la espera por quién acciona. Pero los
+  resueltos no traen fecha de resolución, así que su duración no se puede medir.
+  Es otro órgano y otro proceso: **no se combina con la CC**.
+
+Cálculo exploratorio, sin revisar: fase actual, no fechada, y con los defectos
+ya anotados arriba.
 
 ## Cosas que NO hay que volver a intentar
 
