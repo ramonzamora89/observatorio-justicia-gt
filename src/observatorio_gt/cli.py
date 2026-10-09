@@ -336,6 +336,56 @@ def cc_atributos(
         raise typer.Exit(code=3)
 
 
+@cc_app.command("pdfs")
+def cc_pdfs(
+    destino: Path = typer.Option(..., help="Raíz de datos crudos. Debe existir: no se crea."),
+    config: Path = typer.Option(DEFAULT_CONFIG),
+    muestra_path: Path = typer.Option(Path("data/processed/cc_ptmp/muestra.jsonl")),
+    manifest: Path = typer.Option(Path("data/manifests/cc_ptmp/pdfs_muestra.jsonl")),
+    limite: int | None = typer.Option(None, help="Solo los primeros N documentos (pruebas)"),
+    max_peticiones: int = typer.Option(10000, help="Cortacircuitos"),
+    pretty: bool = typer.Option(False, help="Log legible; por defecto JSON"),
+) -> None:
+    """Descarga los PDF de la muestra a DESTINO, con manifest y hash.
+
+    Reanudable: volver a lanzarlo salta lo ya descargado y reintenta lo fallido.
+    """
+    from observatorio_gt import pdfs
+
+    configure(pretty=pretty)
+    cfg = load_source_config(config)
+    policy = HttpPolicy(
+        user_agent=cfg.user_agent, requests_per_second=cfg.requests_per_second,
+        jitter=cfg.jitter, timeout_s=cfg.timeout_s, max_attempts=cfg.max_attempts,
+        max_requests_per_run=max_peticiones,
+    )
+    seleccion = [
+        json.loads(linea)
+        for linea in muestra_path.read_text(encoding="utf-8").splitlines()
+        if linea.strip()
+    ]
+    if limite is not None:
+        seleccion = seleccion[:limite]
+    try:
+        with PoliteClient(policy, cache=None) as client:
+            prog = pdfs.descargar(
+                client, seleccion, destino, manifest,
+                cache_lectura=DiskCache(cfg.cache_root, ttl_s=0),
+            )
+    except pdfs.DestinoNoDisponible as exc:
+        typer.echo(f"No se descarga: {exc}", err=True)
+        raise typer.Exit(code=2) from exc
+
+    typer.echo(f"\nseleccion   : {len(seleccion):,}")
+    typer.echo(f"ya estaban  : {prog.saltados:,}")
+    typer.echo(f"de la red   : {prog.ok_red:,}")
+    typer.echo(f"de la cache : {prog.ok_cache:,}")
+    typer.echo(f"fallidos    : {prog.fallidos:,}  (no comprobados, no ausentes)")
+    if prog.detenido_por:
+        typer.echo(f"DETENIDO    : {prog.detenido_por}")
+        raise typer.Exit(code=3)
+
+
 @cc_app.command("estudio-apelaciones")
 def cc_estudio(
     config: Path = typer.Option(DEFAULT_CONFIG),
