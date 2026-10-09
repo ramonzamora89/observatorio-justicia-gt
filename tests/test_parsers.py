@@ -38,6 +38,14 @@ def test_detecta_capa_hecha_por_escaner(producer: str) -> None:
     assert prof.producido_por_escaner
 
 
+def test_itextsharp_no_es_un_escaner_sharp() -> None:
+    """La CC firma sus PDF de Word con iTextSharp; «sharp» es marca de escaner."""
+    producer = "Adobe PDF Library 23.6.96; modified using iTextSharp™ 5.5.8"
+    assert not PdfProfile(Path("x.pdf"), 3, producer, "Acrobat PDFMaker 23 para Word") \
+        .producido_por_escaner
+    assert PdfProfile(Path("x.pdf"), 3, "SHARP MX-M365N", None).producido_por_escaner
+
+
 def test_pdf_sin_productor_no_se_acusa_de_escaner() -> None:
     assert not PdfProfile(Path("x.pdf"), 3, None, None).producido_por_escaner
 

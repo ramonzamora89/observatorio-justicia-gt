@@ -10,6 +10,7 @@ verificable, y ``evidence_spans`` del modelo de datos exige la pagina.
 
 from __future__ import annotations
 
+import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,6 +22,11 @@ PRODUCTORES_DE_ESCANER: tuple[str, ...] = (
     "leanscan", "scanner", "scansnap", "xerox", "kyocera", "ricoh", "canon",
     "epson", "hp digital sending", "toshiba", "sharp", "abbyy", "finereader",
     "tesseract", "ocrmypdf",
+)
+#: Por palabra completa. Por subcadena, «sharp» delataba como escaner a
+#: «iTextSharp», la libreria con que la CC firma sus PDF nacidos de Word.
+_ESCANER = re.compile(
+    r"\b(?:" + "|".join(re.escape(m) for m in PRODUCTORES_DE_ESCANER) + r")\b"
 )
 
 
@@ -39,7 +45,7 @@ class PdfProfile:
     def producido_por_escaner(self) -> bool:
         """¿La capa de texto la hizo un escaner o un OCR ajeno?"""
         campos = " ".join(x.lower() for x in (self.producer, self.creator) if x)
-        return any(marca in campos for marca in PRODUCTORES_DE_ESCANER)
+        return _ESCANER.search(campos) is not None
 
 
 @dataclass(frozen=True)
